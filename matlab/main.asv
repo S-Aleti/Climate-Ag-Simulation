@@ -1,9 +1,9 @@
 % Reads and processes data from 2017_elasticites_outputs.xlsx and outputs
-% a cell array containing data in the format {country, commodity, cross
-% commodity, elasticity type, elasticity}
+% a cell array containing data in the format {country,  
 
 %% Read data file
 [~,~,xls_raw] = xlsread('data/2017_elasticities_outputs.xlsx');
+
 
 %% Process data
 data = {};
@@ -31,6 +31,10 @@ for i = 2:size(xls_raw,1)
         continue; %move on to next cell
         
     end
+
+    
+    
+    
     
 end
 

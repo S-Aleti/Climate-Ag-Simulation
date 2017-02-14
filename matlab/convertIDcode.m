@@ -20,7 +20,7 @@ if ~(all(id_code(1:2) == 'S_')) % code doesn't start with 'S_'
 
         cross =     convertCommodityCode(id_code(...
                          delim_inds(2)+1:delim_inds(3)-1));
-        e_type =    id_code(delim_inds(3)+1:length(id_code));
+        e_type =    ['demand_', id_code(delim_inds(3)+1:length(id_code))];
 
     else % if cross commodity is itself
 

@@ -17,7 +17,7 @@ switch country_code
     case 'P'
         country_str = 'Peru';
     case 'U'
-        country_str = 'Uraguay';
+        country_str = 'Uruguay';
     case 'V'
         country_str = 'Venenzuela';
     case 'AL'
@@ -72,7 +72,7 @@ switch country_code
         country_str = 'Vietnam';
                       
     otherwise
-        error(['Invalid Country Code: ' , country_code]);
+        country_str = ['Unknown: ', country_code];
 
 end
 

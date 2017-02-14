@@ -18,11 +18,13 @@ switch commodity_code
         commodity_str = 'sugarcane';
     case 'RLG'
         commodity_str = 'rice (long-grain)';
+    case 'OC'
+        commodity_str = 'organic corn';
         
         % finish rest of the commodity codes %
                       
     otherwise
-        commodity_str = 'unknown';
+        commodity_str = ['Unknown: ', commodity_code ];
         %error(['Invalid Commodity Code: ' , commodity_code]);
 
 end

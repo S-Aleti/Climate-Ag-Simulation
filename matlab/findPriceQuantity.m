@@ -1,21 +1,19 @@
-function [ filtered_data ] = findElasticity( data, country, ...
-                                            commodity, type )
-
+function [ filtered_data ] = findPriceQuantity( data, country, ...
+                                                    commodity, year)
+                                                
 % FINDELASTICITY Searches cell array for the elasticity of a 
 % commodity at a given location
 % ========================================================================
 % INPUT ARGUMENTS:
-%   data                 (cell array) from collectElasticityData.m
+%   data                 (cell array) from collectSupplyDemandData.m
 %   country              (string) country name, use 'all' for all
 %   commodity            (string) commodity name, use 'all' for all
-%   type                 (string) elasticity type from the following:
-%                           demand_I, demand_O, ,demand_C, demand_E, 
-%                           supply; use 'all' for all
+%   year                 (int) year of data, use 'all' for all
 % ========================================================================
 % OUTPUT:
 %   filtered_data        (cell array) elasticity data filtered by the 
-%                           country, commodity, and/or elasticity type in
-%                           the same format as the data variable
+%                           country, commodity, and/or year in the same 
+%                           format as the data variable
 % ========================================================================
 
 %% Filter by country
@@ -39,7 +37,7 @@ else % looking for a specific country
     end
    
 end
-    
+
 %% Filter by commodity
 
 if isequal(commodity,'all')
@@ -62,20 +60,20 @@ else % looking for a specific commodity
     
 end
 
-%% Filter by elasticity
+%% Filter by year
 
 filtered_data = {};
 
-if isequal(type,'all')
+if isequal(year,'all')
     
     filtered_data = data_commodity;
     
-else % if we're looking for a specific elasticity type
+else % if we're looking for data from a certain year
 
     for i = 1:size(data_commodity,1)
         
-        % check type of elasticity we're looking for
-        if isequal(data_commodity(i,4), {type})
+        % check year we're looking for
+        if isequal(data_commodity(i,3), {year})
             
             % add data to output cell arry
             filtered_data = [filtered_data; data_commodity(i,:)];
@@ -86,4 +84,7 @@ else % if we're looking for a specific elasticity type
     
 end
 
+
+
 end
+

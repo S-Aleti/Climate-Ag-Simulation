@@ -1,13 +1,24 @@
-function [ data ] = collectElasticityData( file_name, ...
-                                            code_column, data_column )
-%COLLECTELASTICITYDATA collects elasticity data from an excel file
+function [ data ] = collectElasticityData( file_name, country_col, ...
+                                            commodity_col, cross_col, ...
+                                            type_col, elas_col)
+
+% COLLECTELASTICITYDATA collects elasticity data from an excel file
 % Reads and processes data from 2017_elasticites_outputs.xlsx and outputs
 % a cell array containing data in the format {country, commodity, cross
 % commodity, elasticity type, elasticity}
 % ========================================================================
 % INPUT ARGUMENTS:
-%   code column              (int) column corresponding to id codes
-%   data column              (int) column corresponding to elasticites
+%   file name            (string) location of xls file 
+%   country_col          (string) column corresponding to country
+%   commodity_col        (string) column corresponding to commodity
+%   cross_col            (string) column corresponding to cross commodity
+%   type_col             (string) column corresponding to elasticity type
+%   elas_col             (string) column corresponding to elasticity value
+% ========================================================================
+% OUTPUT:
+%   data                 (cell array) contains an array of cells in the 
+%                           following format: {country, commodity, cross,
+%                           elasticity_type, elasticity}
 % ========================================================================
 
 %% Read data file
@@ -19,19 +30,30 @@ function [ data ] = collectElasticityData( file_name, ...
 
 data = {};
 
+% open waitbar
+h = waitbar(0,'Collecting supply and demand data');
+data_size = size(xls_raw,1);
+
 for i = 2:size(xls_raw,1)
    
-    % check if cells contain any data
-    if (~cellfun(@(C) isequaln(C, NaN), xls_raw(i,code_column))) && ...
-            (~cellfun(@(C) isequaln(C, NaN), xls_raw(i,data_column)))
-        
+    % update wait bar
+    waitbar(i/data_size,h);
+    
+    % if none of the cells are empty
+    if( ~(  isCellEmpty(xls_raw(i,country_col))     || ...
+            isCellEmpty(xls_raw(i,commodity_col))   || ...
+            isCellEmpty(xls_raw(i,type_col))        || ...
+            isCellEmpty(xls_raw(i,elas_col))))
+                                                       
         % process code and extract elasticity
-        output = cell(1,5);
-        output(1:4) = convertIDcode(char(xls_raw(i,code_column)));
-        output(5) = xls_raw(i,data_column);
+        output = {strtrim(cell2mat(xls_raw(i,country_col))),           ...
+                  lower(cell2mat(xls_raw(i,commodity_col))),           ...
+                  cell2mat(xls_raw(i,cross_col)),                      ...
+                  renameElasticityType(cell2mat(xls_raw(i,type_col))), ...
+                  cell2mat(xls_raw(i,elas_col)) }; 
         
         % add information collected to data (cell array)
-        data = [data; output];
+        data = [data; output]; %#ok<AGROW>
                   
     else % if no data 
         
@@ -41,8 +63,42 @@ for i = 2:size(xls_raw,1)
     
 end
 
-%disp('Elasticity data collection completed');
-
+% close waitbar
+close(h)
 
 end
 
+%% Local Functions
+
+function [ boolean ] = isCellEmpty( c )
+
+% ISCELLEMPTY checks if a given cell c is empty or contains '.'
+% =================================================================
+
+boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
+            cellfun(@(C) isequaln(C, '.'), c);
+
+end
+
+function [ output ] = renameElasticityType( elas_type )
+
+% RENAMEELASTICITYTYPE standardizes the format of elasticity types
+% =================================================================
+
+switch lower(elas_type)
+    
+    case 'cross price'
+        output = 'demand_C';
+    case 'own price'
+        output = 'demand_O';
+    case 'expenditure'
+        output = 'demand_E';
+    case 'income'
+        output = 'demand_I';
+        
+    otherwise
+        error(['Commodity code [' , lower(elas_type) , '] unknown']);
+
+end
+
+end

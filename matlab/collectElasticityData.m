@@ -87,7 +87,17 @@ function [ output ] = renameElasticityType( elas_type )
 
 switch lower(elas_type)
     
-    case 'cross price'
+    case 'demand_cross_price' 
+        output = 'demand_C';
+    case 'demand_own_price'
+        output = 'demand_O';
+    case 'demand_expenditure'
+        output = 'demand_E';
+    case 'demand_income'
+        output = 'demand_I';
+	case 'supply_own_price'
+		output = 'supply';
+    case 'cross price' 
         output = 'demand_C';
     case 'own price'
         output = 'demand_O';
@@ -95,9 +105,11 @@ switch lower(elas_type)
         output = 'demand_E';
     case 'income'
         output = 'demand_I';
+	case 'supply'
+		output = 'supply';
         
     otherwise
-        error(['Commodity code [' , lower(elas_type) , '] unknown']);
+        error(['Elasticity type [' , lower(elas_type) , '] unknown']);
 
 end
 

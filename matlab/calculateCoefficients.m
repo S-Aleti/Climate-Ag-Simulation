@@ -2,7 +2,7 @@ function [ alpha_d, beta_d, alpha_s, beta_s ] = calculateCoefficients( ...
                                           elas_D, elas_S, price, quantity)
 
 % CALCULATECOEFFICIENTS Uses elasticity to determinet the coefficients
-% of a linear curve
+% of a linear curve: quantity = alpha + beta*price
 % ========================================================================
 % INPUT ARGUMENTS:
 %   elas_D               (scalar) elasticity of demand 

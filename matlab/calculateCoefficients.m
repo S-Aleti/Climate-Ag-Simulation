@@ -23,7 +23,7 @@ function [ alpha_d, beta_d, alpha_s, beta_s ] = calculateCoefficients( ...
 beta_d = -(1/elas_D)*(price/quantity);
 
 % intercept of the (linear) demand curve
-alpha_d = price + beta_d*quantity;
+alpha_d = price - beta_d*quantity;
 
 %% Calculate supply function
 
@@ -31,7 +31,7 @@ alpha_d = price + beta_d*quantity;
 beta_s = -(1/elas_S)*(price/quantity);
 
 % intercept of the (linear) supply curve
-alpha_s = price + beta_s*quantity;
+alpha_s = price - beta_s*quantity;
 
 end
 

@@ -20,18 +20,18 @@ function [ alpha_d, beta_d, alpha_s, beta_s ] = calculateCoefficients( ...
 %% Calculate demand function
 
 % slope of the (linear) demand curve 
-beta_d = -(1/elas_D)*(price/quantity);
+beta_d = (elas_D)*(quantity/price);
 
 % intercept of the (linear) demand curve
-alpha_d = price - beta_d*quantity;
+alpha_d = quantity - (beta_d)*(price);
 
 %% Calculate supply function
 
 % slope of (linear) supply curve
-beta_s = -(1/elas_S)*(price/quantity);
+beta_s = (elas_S)*(quantity/price);
 
 % intercept of the (linear) supply curve
-alpha_s = price - beta_s*quantity;
+alpha_s = quantity - (beta_s)*(price);
 
 end
 

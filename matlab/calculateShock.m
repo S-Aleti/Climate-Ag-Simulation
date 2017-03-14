@@ -17,10 +17,11 @@ function [ output ] = calculateShock( price, quantity, alpha_d, beta_d, ...
 %% Calculate Original Surpluses
 
 % Consumer surplus
-surplus_C1 = (1/2)*(quantity)*(alpha_d-price);
+surplus_C1 = (1/2)*(quantity)*((-alpha_d/beta_d)-price);
 
 % Producer surplus
-surplus_S1 = (1/2)*(quantity)*(price-max(alpha_s,0));
+surplus_S1 = (1/2)*(max(0,alpha_s)+quantity)...
+             *(price-max(0,-alpha_s/beta_s));
 
 %% Introduce Supply Shock
 
@@ -31,15 +32,19 @@ new_quantity = alpha_d + beta_d*new_price;
 
 %% Calculate New Surpluses
 
-% New Consumer surplus
-surplus_C2 = (1/2)*(new_quantity)*(alpha_d-new_price);
+if (new_price > 0 && new_quantity > 0)
+    % New Consumer surplus
+    surplus_C2 = (1/2)*(new_quantity)*((-alpha_d/beta_d)-new_price);
 
-% New Producer surplus
-surplus_S2 = (1/2)*(new_quantity)...
-             *(new_price-max((alpha_2 + supply_shock),0));
+    % New Producer surplus
+    surplus_S2 = (1/2)*(max(0,alpha_s+supply_shock)+new_quantity)...
+                 *(new_price-max(0,-(alpha_s+supply_shock)/beta_s));
+else
+    surplus_C2 = 0;
+    surplus_S2 = 0;
+end
 
-
-
+surplus_S2
 
 end
 

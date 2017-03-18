@@ -1,14 +1,15 @@
-function [ data ] = collectElasticityData( file_name, country_col, ...
-                                            commodity_col, cross_col, ...
-                                            type_col, elas_col)
+function [ data ] = collectElasticityData( file_name, c_code_col,     ...
+                                           country_col, commodity_col,  ...
+                                           cross_col, type_col, elas_col)
 
 % COLLECTELASTICITYDATA collects elasticity data from an excel file
-% Reads and processes data from 2017_elasticites_outputs.xlsx and outputs
+% Reads and processes data from 2017_Elasticity_Data.xlsx and outputs
 % a cell array containing data in the format {country, commodity, cross
 % commodity, elasticity type, elasticity}
 % ========================================================================
 % INPUT ARGUMENTS:
 %   file name            (string) location of xls file 
+%   c_code_col           (int)    column corresponding to the country code
 %   country_col          (string) column corresponding to country
 %   commodity_col        (string) column corresponding to commodity
 %   cross_col            (string) column corresponding to cross commodity
@@ -23,7 +24,6 @@ function [ data ] = collectElasticityData( file_name, country_col, ...
 
 %% Read data file
 
-% use '/data/2017_elasticities_outputs.xlsx'
 [~, ~, xls_raw] = xlsread(file_name);
 
 %% Process data
@@ -40,14 +40,16 @@ for i = 2:size(xls_raw,1)
     waitbar(i/data_size,h);
     
     % if none of the cells are empty
-    if( ~(  isCellEmpty(xls_raw(i,country_col))     || ...
-            isCellEmpty(xls_raw(i,commodity_col))   || ...
-            isCellEmpty(xls_raw(i,type_col))        || ...
-            isCellEmpty(xls_raw(i,elas_col))))
+    if ( ~(  isequal(cell2mat(xls_raw(i,c_code_col)),'')     || ...
+             isCellEmpty(xls_raw(i,country_col))             || ...
+             isCellEmpty(xls_raw(i,commodity_col))           || ...
+             isCellEmpty(xls_raw(i,type_col))                || ...
+             isCellEmpty(xls_raw(i,elas_col))))
                                                        
-        % process code and extract elasticity
-        output = {strtrim(cell2mat(xls_raw(i,country_col))),           ...
-                  lower(cell2mat(xls_raw(i,commodity_col))),           ...
+        % process code and extract elasticity 
+        output = {cell2mat(xls_raw(i,c_code_col)),                     ...
+                  strtrim(cell2mat(xls_raw(i,country_col))),           ...
+                  strtrim(lower(cell2mat(xls_raw(i,commodity_col)))),  ...
                   cell2mat(xls_raw(i,cross_col)),                      ...
                   renameElasticityType(cell2mat(xls_raw(i,type_col))), ...
                   cell2mat(xls_raw(i,elas_col)) }; 
@@ -63,6 +65,9 @@ for i = 2:size(xls_raw,1)
     
 end
 
+% sort by country code
+data = sortrows(data,1);
+
 % close waitbar
 close(h)
 
@@ -73,7 +78,7 @@ end
 function [ boolean ] = isCellEmpty( c )
 
 % ISCELLEMPTY checks if a given cell c is empty or contains '.'
-% =================================================================
+% ========================================================================
 
 boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
             cellfun(@(C) isequaln(C, '.'), c);
@@ -83,7 +88,7 @@ end
 function [ output ] = renameElasticityType( elas_type )
 
 % RENAMEELASTICITYTYPE standardizes the format of elasticity types
-% =================================================================
+% ========================================================================
 
 switch lower(elas_type)
     
@@ -107,6 +112,12 @@ switch lower(elas_type)
         output = 'demand_I';
 	case 'supply'
 		output = 'supply';
+    case 'supply own-price';
+        output = 'supply';
+    case 'demand own-price';
+        output = 'demand_O';
+    case 'demand income';
+        output = 'demand_I';
         
     otherwise
         error(['Elasticity type [' , lower(elas_type) , '] unknown']);

@@ -1,0 +1,8 @@
+# MATLAB temporary files
+*.asv
+
+# Excel temporary files
+~$*.xls*
+
+# Excel backup files
+*.xlk

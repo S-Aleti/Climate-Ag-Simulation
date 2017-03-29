@@ -24,6 +24,7 @@ function [ data ] = collectPriceQuantityData( file_name, sheet,        ...
 
 [~, ~, xls_raw] = xlsread(file_name,sheet);
 
+
 %% Process data
 
 data = {};
@@ -68,6 +69,7 @@ end
 close(h)
 
 end
+
 
 %% Local Functions
 

@@ -26,6 +26,7 @@ function [ data ] = collectElasticityData( file_name, c_code_col,     ...
 
 [~, ~, xls_raw] = xlsread(file_name);
 
+
 %% Process data
 
 data = {};
@@ -73,6 +74,7 @@ data = sortrows(data,1);
 close(h)
 
 end
+
 
 %% Local Functions
 

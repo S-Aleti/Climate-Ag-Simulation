@@ -1,8 +1,6 @@
 
 % ========================================================================
-% Grabs elasticity data and output data from 
-% data/2017_elasticities_outputs.xlsx and calculates the alpha and beta
-% coefficients of the model: Q = \alpha + \beta*P
+% Collects elasticity, price, quantity, and counterfactual data
 % ========================================================================
 
 %% Get elasticity data from the following file:
@@ -25,4 +23,12 @@ pq_data = collectPriceQuantityData(file_name, 1,  1, 2, 11, 4, 15, 13);
 
 disp('Merging data...')
 
-data = collectAllData(pq_data, elas_data);
+epq_data = collectAllData(pq_data, elas_data);
+
+
+%% Collect counterfactual data
+
+disp('Collecting counterfactual data...')
+
+file_name   = 'data/Counterfactual_Data.xlsx';
+cf_data = collectCounterfactualData(file_name, 2, 1, 3, 1)

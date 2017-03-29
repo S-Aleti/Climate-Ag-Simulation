@@ -1,9 +1,9 @@
-function [ data ] = collectSupplyDemandData( file_name, sheet,          ...
-                                             c_code_col, country_col,   ...
-                                             commodity_col, year_col,   ...
+function [ data ] = collectPriceQuantityData( file_name, sheet,        ...
+                                             c_code_col, country_col,  ...
+                                             commodity_col, year_col,  ...
                                              price_col, quantity_col)
 
-% COLLECTSUPPLYDEMANDDATA collects supply and demand data from an xls file
+% COLLECTPRICEQUANTITYDATA collects price and quantity data from an xls 
 % ========================================================================
 % INPUT ARGUMENTS:
 %   file name            (string) location of xls file 
@@ -29,14 +29,13 @@ function [ data ] = collectSupplyDemandData( file_name, sheet,          ...
 data = {};
 
 % open waitbar
-h = waitbar(0, ['Collecting supply and demand data from sheet ', ...
-                   num2str(sheet)]);
+h = waitbar(0, ['Collecting price and quantity data']);
 data_size = size(xls_raw,1);
 
-for i = 2:size(xls_raw,1)
+for i = 3:size(xls_raw,1)
    
     % update wait bar
-    waitbar(i/data_size,h);
+    if (rand()<0.1) waitbar(i/data_size,h); end;
     
     % if none of the cells are empty
     if ( ~(   isequal(cell2mat(xls_raw(i,c_code_col)),'')     || ...
@@ -65,7 +64,7 @@ for i = 2:size(xls_raw,1)
     
 end
 
-% sort data by country code
+% sort by country code
 data = sortrows(data,1);
 
 % close waitbar
@@ -80,7 +79,13 @@ function [ boolean ] = isCellEmpty( c )
 % ISCELLEMPTY checks if a given cell c is empty or contains '.'
 % ========================================================================
 
+% check if cell is completly empty
 boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
             cellfun(@(C) isequaln(C, '.'), c);
+
+% check if cell is an empty string
+if (~boolean)
+    boolean = length(cell2mat(c)) == 0;
+end
 
 end

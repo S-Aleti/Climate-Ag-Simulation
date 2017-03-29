@@ -37,7 +37,7 @@ data_size = size(xls_raw,1);
 for i = 2:size(xls_raw,1)
    
     % update wait bar
-    waitbar(i/data_size,h);
+    if (rand()<0.1) waitbar(i/data_size,h); end;
     
     % if none of the cells are empty
     if ( ~(  isequal(cell2mat(xls_raw(i,c_code_col)),'')     || ...
@@ -83,6 +83,11 @@ function [ boolean ] = isCellEmpty( c )
 boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
             cellfun(@(C) isequaln(C, '.'), c);
 
+% check if cell is an empty string
+if (~boolean)
+    boolean = length(cell2mat(c)) == 0;
+end
+        
 end
 
 function [ output ] = renameElasticityType( elas_type )
@@ -118,6 +123,12 @@ switch lower(elas_type)
         output = 'demand_O';
     case 'demand income';
         output = 'demand_I';
+    case 'demand_cross price';
+        output = 'demand_C';
+    case 'demand_own price';
+        output = 'demand_I';
+    case 'supply_own price';
+        output = 'supply';
         
     otherwise
         error(['Elasticity type [' , lower(elas_type) , '] unknown']);

@@ -7,7 +7,7 @@ function [ data ] = collectPriceQuantityData( file_name, sheet,        ...
 % ========================================================================
 % INPUT ARGUMENTS:
 %   file name            (string) location of xls file 
-%   c_code_col           (int)    column corresponding to the country code
+%   c_code_col           (int) column corresponding to the country code
 %   country_col          (int) column corresponding to country
 %   commodity_col        (int) column corresponding to the commodity
 %   year_col             (int) column corresponding to year of data
@@ -16,8 +16,8 @@ function [ data ] = collectPriceQuantityData( file_name, sheet,        ...
 % ========================================================================
 % OUTPUT:
 %   data                 (cell array) contains an array of cells in the 
-%                           following format: {country, commodity, year,
-%                           supply, demand}
+%                           following format: {country_id, country, 
+%                           commodity, year, price, quantity}
 % ========================================================================
 
 %% Read data file
@@ -64,9 +64,6 @@ for i = 3:size(xls_raw,1)
     
 end
 
-% sort by country code
-data = sortrows(data,1);
-
 % close waitbar
 close(h)
 
@@ -76,7 +73,7 @@ end
 
 function [ boolean ] = isCellEmpty( c )
 
-% ISCELLEMPTY checks if a given cell c is empty or contains '.'
+% ISCELLEMPTY checks if a given cell c is empty or contains ''
 % ========================================================================
 
 % check if cell is completly empty

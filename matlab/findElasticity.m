@@ -1,4 +1,4 @@
-function [ filtered_data ] = findElasticity( data, country, ...
+function [ filtered_data ] = findElasticity( data, id_code, ...
                                             commodity, type )
 
 % FINDELASTICITY Searches cell array for the elasticity of a 
@@ -6,7 +6,7 @@ function [ filtered_data ] = findElasticity( data, country, ...
 % ========================================================================
 % INPUT ARGUMENTS:
 %   data                 (cell array) from collectElasticityData.m
-%   country              (string) country name, use 'all' for all
+%   id_code              (int) country identification code
 %   commodity            (string) commodity name, use 'all' for all
 %   type                 (string) elasticity type from the following:
 %                           demand_I, demand_O, ,demand_C, demand_E, 
@@ -20,7 +20,7 @@ function [ filtered_data ] = findElasticity( data, country, ...
 
 %% Filter by country
 
-if isequal(country,'all') 
+if isequal(id_code,'all') 
 
     data_country = data;
     
@@ -32,7 +32,7 @@ else % looking for a specific country
     for i = 1:size(data,1)
 
         %check country code 
-        if isequal(data(i,1),{country})
+        if isequal(data(i,1),{id_code})
             data_country = [data_country; data(i,:)];
         end
 
@@ -54,7 +54,7 @@ else % looking for a specific commodity
     for i = 1:size(data_country,1)
 
         %check commodity code 
-        if isequal(data_country(i,2),{commodity})
+        if isequal(data_country(i,3),{commodity})
             data_commodity = [data_commodity; (data_country(i,:))];
         end
 
@@ -75,7 +75,7 @@ else % if we're looking for a specific elasticity type
     for i = 1:size(data_commodity,1)
         
         % check type of elasticity we're looking for
-        if isequal(data_commodity(i,4), {type})
+        if isequal(data_commodity(i,5), {type})
             
             % add data to output cell arry
             filtered_data = [filtered_data; data_commodity(i,:)];

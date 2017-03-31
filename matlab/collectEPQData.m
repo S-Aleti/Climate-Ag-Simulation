@@ -1,6 +1,6 @@
-function [ all_data ] = collectAllData( pq_data, elas_data )
+function [ all_data ] = collectEPQData( pq_data, elas_data )
 
-% COLLECTALLDATA collects all data together in one cell array
+% COLLECTEPQDATA collects all data together in one cell array
 % ========================================================================
 % INPUT ARGUMENTS:
 %   pq_data              (cell array) from collectPriceQuantityData.m
@@ -44,7 +44,7 @@ for i = 1:size(pq_data,1)
     if (~isempty(supply) && ~( isempty(demand_O) && isempty(demand_C) ...
                             && isempty(demand_I) && isempty(demand_E) ) )
         
-        all_data = [all_data; {country, commodity, year, price,        ...
+        all_data = [all_data; {c_code,country, commodity, year, price,        ...
                         quantity, averageElas(demand_O),               ...
                         averageElas(demand_C), averageElas(demand_I),  ...
                         averageElas(demand_E), averageElas(supply)}];

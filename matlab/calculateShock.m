@@ -60,7 +60,11 @@ surplus_L2 = (quantity - pe_quantity) * (new_price - price) / 2;
 % lost producer surplus
 surplus_L3 = (quantity * (price - (alpha_s/( -beta_s ))) / 2) ...
               - (pe_quantity * (price - (alpha_s2/( -beta_s ))) / 2);
-          
+       
+%% Output
+
+output = [new_price, new_quantity, surplus_L1, surplus_L2, surplus_L3];
+
 end
 
 

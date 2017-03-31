@@ -31,4 +31,4 @@ epq_data = collectAllData(pq_data, elas_data);
 disp('Collecting counterfactual data...')
 
 file_name   = 'data/Counterfactual_Data.xlsx';
-cf_data = collectCounterfactualData(file_name, 2, 1, 3, 1)
+cf_data = collectCounterfactualData(file_name, 2, 1, 3, 1);

@@ -129,7 +129,7 @@ switch lower(elas_type)
     case 'demand_cross price';
         output = 'demand_C';
     case 'demand_own price';
-        output = 'demand_I';
+        output = 'demand_O';
     case 'supply_own price';
         output = 'supply';
         

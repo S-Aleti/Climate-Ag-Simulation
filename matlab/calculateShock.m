@@ -1,5 +1,5 @@
 function [ output ] = calculateShock( price, quantity, alpha_d, beta_d, ...
-                                            alpha_s, beta_s, supply_shock)
+                                            alpha_s, beta_s, alpha_shock)
 
 % CALCULATESHOCK finds the change in consumer and producer surplus given a
 % shock to a linear demand and supply schedule
@@ -27,7 +27,7 @@ surplus_S1 = (1/2) * (max(0, alpha_s) + quantity)...
 % New supply schedule: Q = (alpha_s + supply_shock) + beta_s*P
 
 % new intercept 
-alpha_s2 = alpha_s + supply_shock;
+alpha_s2 = alpha_s + alpha_shock;
 
 new_price =  (alpha_s2 - alpha_d) / (beta_d - beta_s);
 new_quantity = alpha_d + beta_d * new_price;

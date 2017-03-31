@@ -23,7 +23,7 @@ pq_data = collectPriceQuantityData(file_name, 1,  1, 2, 11, 4, 15, 13);
 
 disp('Merging data...')
 
-epq_data = collectAllData(pq_data, elas_data);
+epq_data = collectEPQData(pq_data, elas_data);
 
 
 %% Collect counterfactual data

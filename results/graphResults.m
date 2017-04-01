@@ -22,7 +22,8 @@ corn_prices_fig = plotShockData(prices, {'USA', 'China',  'Brazil'},   ...
                                 'Corn prices', '% Price Change');
 
 % Save Results
-save('corn_prices.fig', 'corn_prices_fig');
+saveas(corn_prices_fig, 'results\graphs\corn_prices.fig');
+saveas(corn_prices_fig, 'results\graphs\corn_prices.png');
 
 %% Soybeans
 
@@ -44,7 +45,8 @@ soybean_prices_fig = plotShockData( prices, {'USA', 'China', 'Brazil', ...
                                     '% Price Change');
                                       
 % Save reults
-save('soybean_prices.fig', 'soybean_prices_fig');
+saveas(soybean_prices_fig, 'results\graphs\soybean_prices.fig');
+saveas(soybean_prices_fig, 'results\graphs\soybean_prices.png');
                                       
 %% Show graphs
 

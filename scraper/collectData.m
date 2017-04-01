@@ -1,6 +1,6 @@
 
 % ========================================================================
-% Collects elasticity, price, quantity, and counterfactual data
+% Collects required data from excel files
 % ========================================================================
 
 %% Get elasticity data from the following file:
@@ -8,7 +8,7 @@
 disp('Collecting elasticity data...')
 
 file_name = 'data/Elasticity_Data.xlsx';
-elas_data = [collectElasticityData(file_name, 1, 2, 3, 4, 6, 7)];
+elas_data = collectElasticityData(file_name, 1, 2, 3, 4, 6, 7);
 
 
 %% Get price and quantity data from the following file:
@@ -31,4 +31,9 @@ epq_data = collectEPQData(pq_data, elas_data);
 disp('Collecting counterfactual data...')
 
 file_name   = 'data/Counterfactual_Data.xlsx';
-cf_data = collectCounterfactualData(file_name, 2, 1, 3, 1);
+cf_data = {};
+
+% each sheet contains cf data for a specific commodity
+for i = 1:5
+    cf_data = [cf_data; collectCounterfactualData(file_name, 2, 1, 3, i)];
+end

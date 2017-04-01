@@ -30,7 +30,7 @@ function [ data ] = collectPriceQuantityData( file_name, sheet,        ...
 data = {};
 
 % open waitbar
-h = waitbar(0, ['Collecting price and quantity data']);
+h = waitbar(0, 'Collecting price and quantity data');
 data_size = size(xls_raw,1);
 
 for i = 3:size(xls_raw,1)
@@ -84,7 +84,7 @@ boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
 
 % check if cell is an empty string
 if (~boolean)
-    boolean = length(cell2mat(c)) == 0;
+    boolean = isempty(cell2mat(c));
 end
 
 end

@@ -1,4 +1,4 @@
-% 
+
 % ========================================================================
 % Track prices in counterfactual scenario
 % ========================================================================
@@ -18,7 +18,7 @@ for i = 1:size(cf_data,1)
     entry = cell(1,13);
     entry(1:3) = {country_id, country, commodity};
     
-    % find corresponding elasticity, price, and quantity 
+    % find latest corresponding elasticity, price, and quantity 
     epq = findEPQ(epq_data, country_id, commodity, 'latest');
     
     % skip iteration if no data

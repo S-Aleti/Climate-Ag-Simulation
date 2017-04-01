@@ -88,7 +88,7 @@ boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
 
 % check if cell is an empty string
 if (~boolean)
-    boolean = length(cell2mat(c)) == 0;
+    boolean = isempty(cell2mat(c));
 end
         
 end

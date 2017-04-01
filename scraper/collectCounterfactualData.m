@@ -53,7 +53,7 @@ for i = 2:size(xls_raw,1)
                   
 
             % assumes 11 cols of data      
-            output(1,4:14) = xls_raw(i,[data_col:data_col+10]); 
+            output(1,4:14) = xls_raw(i,data_col:data_col+10); 
 
             % add information collected to data (cell array)
             data = [data; output]; %#ok<AGROW>
@@ -86,7 +86,7 @@ boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
 
 % check if cell is an empty string
 if (~boolean)
-    boolean = length(cell2mat(c)) == 0;
+    boolean = isempty(cell2mat(c));
 end
         
 end

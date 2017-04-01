@@ -59,22 +59,6 @@ end
 
 %% Local Functions
 
-function [ boolean ] = isCellEmpty( c )
-
-% ISCELLEMPTY checks if a given cell c is empty or contains ''
-% ========================================================================
-
-% check if cell is completly empty
-boolean = cellfun(@(C) isequaln(C, NaN), c) || ...
-            cellfun(@(C) isequaln(C, '.'), c);
-
-% check if cell is an empty string
-if (~boolean)
-    boolean = length(cell2mat(c)) == 0;
-end
-
-end
-
 function [average_elas] = averageElas( data )
 
 % AVERAGEELAS averages the elasticity values of a cell array

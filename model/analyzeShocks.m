@@ -1,4 +1,4 @@
-function [ data ] = analyzeShocks(epq_data)
+function [ data ] = analyzeShocks(epq_data, cf_data)
 
 %% Calculate shocks 
 

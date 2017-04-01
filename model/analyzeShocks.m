@@ -1,13 +1,13 @@
+function [ data ] = analyzeShocks(epq_data)
 
-% ========================================================================
-% Track prices in counterfactual scenario
-% ========================================================================
+%% Calculate shocks 
 
-%
+% empty cell array to store results
 data = {};
 
 % for each counterfactual scenario
 for i = 1:size(cf_data,1)
+    %% Construct supply and demand model
     
     % get country and commodity of counterfactual
     country_id = cf_data{i,1};
@@ -41,7 +41,9 @@ for i = 1:size(cf_data,1)
                                           elas_D, elas_S, price, quantity);
  
     control_quantity = cf_data{i,4};
-                                      
+    
+    %% Calculate shocks for each year
+    
     for j = 5:14 % each year in the scenario
         
         % find shock value
@@ -50,13 +52,12 @@ for i = 1:size(cf_data,1)
         alpha_shock = quantity_cf - alpha_s - beta_s*price;
         
         % find shock data
-        output = calculateShock( price, quantity, ...
+        output = calculateShockEffects( price, quantity, ...
                           alpha_d, beta_d, alpha_s, beta_s, alpha_shock);
                       
         % percent changes in price, quantity
         price_change = (output(1) - price) / (price);
-        quantity_change = (output(2) - (control_quantity)) ...
-                            / (control_quantity);
+        quantity_change = percent_shock;
                         
         % surplus changes
         transfer_to_producer = output(3);

@@ -1,8 +1,8 @@
-function [ output ] = calculateShock( price, quantity, alpha_d, beta_d, ...
-                                            alpha_s, beta_s, alpha_shock)
+function [ output ] = calculateShockEffects( price, quantity, alpha_d,  ...
+                                     beta_d, alpha_s, beta_s, alpha_shock)
 
-% CALCULATESHOCK finds the change in consumer and producer surplus given a
-% shock to a linear demand and supply schedule
+% CALCULATESHOCKEFFECTS finds the change in consumer and producer surplus 
+% given a shock to a linear demand and supply schedule
 % ========================================================================
 % INPUT ARGUMENTS:
 %   price                (scalar) current price ($/tonne)

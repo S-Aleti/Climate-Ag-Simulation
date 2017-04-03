@@ -58,7 +58,7 @@ for i = 1:size(cf_data,1)
         % percent changes in price, quantity
         price_change = (output(1) - price) / (price);
         quantity_change = percent_shock;
-                        
+        
         % surplus changes
         transfer_to_producer        = output(3);
         consumer_deadweight         = output(4);
@@ -67,7 +67,7 @@ for i = 1:size(cf_data,1)
         % percent change in surpluses
         producer_surplus_change     = (output(8)-output(6))/ output(6); 
         consumer_surplus_change     = (output(9)-output(7))/ output(7); 
-        
+
         % fill in entry
         entry(j-1) = {[price_change, quantity_change,                   ...
                         transfer_to_producer, consumer_deadweight,      ...

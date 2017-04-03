@@ -9,7 +9,7 @@
 
 % input args
 countries      = {'United States', 'China', 'Brazil'};
-corn           = 'corn';
+crop           = 'corn';
 data_type      = 7; % returns percent change in producer surplus
 title_of_graph = 'Change in corn producer surplus over time';
 y_axis_label   = '% change in surplus';
@@ -21,14 +21,14 @@ fig = plotShockData( data, countries, crop, data_type, title_of_graph, ...
 figure(fig); % shows figure
                   
 % Save Results
-saveas(fig, 'results\graphs\corn_prices.fig');
-saveas(fig, 'results\graphs\corn_prices.png');
+%saveas(fig, 'results\graphs\corn_prices.fig');
+%saveas(fig, 'results\graphs\corn_prices.png');
 
 %% Soybeans
 
 % input args
 countries      = {'United States', 'China', 'Brazil', 'India'};
-corn           = 'soybean';
+crop           = 'soybean';
 data_type      = 7; % returns percent change in producer surplus
 title_of_graph = 'Change in soybean producer surplus over time';
 y_axis_label   = '% change in surplus';
@@ -40,5 +40,5 @@ fig = plotShockData( data, countries, crop, data_type, title_of_graph, ...
 figure(fig); % shows figure
                   
 % Save reults
-saveas(fig, 'results\graphs\soybean_prices.fig');
-saveas(fig, 'results\graphs\soybean_prices.png');
+%saveas(fig, 'results\graphs\soybean_prices.fig');
+%saveas(fig, 'results\graphs\soybean_prices.png');

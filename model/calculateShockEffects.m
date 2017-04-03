@@ -13,12 +13,10 @@ function [ output ] = calculateShockEffects( price, quantity, alpha_d,  ...
 %   beta_s               (scalar) slope of supply curve
 %   supply_shock         (scalar) shift in supply curve
 % ========================================================================
-% OUTPUT ARGUMENTS:
-%   new_price            (scalar) price after shock
-%   new_quantity         (scalar) quantity after shock
-%   surplus_L1           (scalar) surplus transfered from c to p
-%   surplus_L2           (scalar) surplus lost by both
-%   surplus_L3           (scalar) surplus lost by producer
+% OUTPUT:
+%   output               (matrix) new_price, new_quantity, surplus_L1, 
+%                                 surplus_L2, surplus_L3, surplus_C1,
+%                                 surplus_S1, surplus_C2, surplus_S2
 
 %% Calculate Original Surpluses
 
@@ -46,21 +44,18 @@ if new_price < 0
     surplus_L1   = 0;
     surplus_L2   = 0;
     surplus_L3   = 0;
+    surplus_C2   = 0;
+    surplus_S2   = 0;
     
 else
     %% Calculate New Surpluses
 
-    if (new_price > 0 && new_quantity > 0)
-        % New Consumer surplus
-        surplus_C2 = (1/2)*(new_quantity)*( (-alpha_d / beta_d) - new_price );
+    % New Consumer surplus
+    surplus_C2 = (1/2)*(new_quantity)*( (-alpha_d / beta_d) - new_price );
 
-        % New Producer surplus
-        surplus_S2 = (1/2)*(max(0, alpha_s2) + new_quantity)...
-                     * (new_price - max(0, -(alpha_s2) / beta_s));
-    else
-        surplus_C2 = 0;
-        surplus_S2 = 0;
-    end
+    % New Producer surplus
+    surplus_S2 = (1/2)*(max(0, alpha_s2) + new_quantity)...
+                 * (new_price - max(0, -(alpha_s2) / beta_s));
 
     %% Calculate Change in Surpluses
 
@@ -81,7 +76,8 @@ end
 
 %% Output
 
-output = [new_price, new_quantity, surplus_L1, surplus_L2, surplus_L3];
+output = [new_price, new_quantity, surplus_L1, surplus_L2, surplus_L3, ...
+          surplus_C1, surplus_S1, surplus_C2, surplus_S2];
 
 end
 

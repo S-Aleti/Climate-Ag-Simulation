@@ -12,6 +12,8 @@ function [ filtered_data ] = findResults( data, country, commodity, type)
 %                                     3 for surplus_L1, 
 %                                     4 for surplus_L2, 
 %                                     5 for surplus_L3
+%                                     6 for % consumer surplus change
+%                                     7 for % producer surplus change
 % ========================================================================
 % OUTPUT:
 %   filtered_data        (cell array) data filtered by the 

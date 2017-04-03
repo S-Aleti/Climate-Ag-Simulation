@@ -7,48 +7,38 @@
 
 %% Corn
 
-% USA, China, Brazil
-corn_USA_prices    = findResults(data, 'United States',  'corn', 1);
-corn_China_prices  = findResults(data, 'China',          'corn', 1);
-corn_Brazil_prices = findResults(data, 'Brazil',         'corn', 1);
+% input args
+countries      = {'United States', 'China', 'Brazil'};
+corn           = 'corn';
+data_type      = 7; % returns percent change in producer surplus
+title_of_graph = 'Change in corn producer surplus over time';
+y_axis_label   = '% change in surplus';
 
-% Prices in a matrix
-prices = [cell2mat(corn_USA_prices(1,4:13));
-          cell2mat(corn_China_prices(1,4:13));
-          cell2mat(corn_Brazil_prices(1,4:13))];
 
-% Graphs
-corn_prices_fig = plotShockData(prices, {'USA', 'China',  'Brazil'},   ...
-                                'Corn prices', '% Price Change');
-
+% plot
+fig = plotShockData( data, countries, crop, data_type, title_of_graph, ...
+                      y_axis_label );
+figure(fig); % shows figure
+                  
 % Save Results
-saveas(corn_prices_fig, 'results\graphs\corn_prices.fig');
-saveas(corn_prices_fig, 'results\graphs\corn_prices.png');
+saveas(fig, 'results\graphs\corn_prices.fig');
+saveas(fig, 'results\graphs\corn_prices.png');
 
 %% Soybeans
 
-% USA, China, Brazil
-soybean_USA_prices    = findResults(data, 'United States',  'soybean', 1);
-soybean_China_prices  = findResults(data, 'China',          'soybean', 1);
-soybean_Brazil_prices = findResults(data, 'Brazil',         'soybean', 1);
-soybean_India_prices  = findResults(data, 'India',          'soybean', 1);
+% input args
+countries      = {'United States', 'China', 'Brazil', 'India'};
+corn           = 'soybean';
+data_type      = 7; % returns percent change in producer surplus
+title_of_graph = 'Change in soybean producer surplus over time';
+y_axis_label   = '% change in surplus';
 
-% Prices in a matrix
-prices = [cell2mat(soybean_USA_prices(1,4:13))   ;
-          cell2mat(soybean_China_prices(1,4:13)) ;
-          cell2mat(soybean_Brazil_prices(1,4:13));
-          cell2mat(soybean_India_prices(1,4:13)) ];
 
-% Graphs
-soybean_prices_fig = plotShockData( prices, {'USA', 'China', 'Brazil', ...
-                                    'India'}, 'Soybean prices',  ... 
-                                    '% Price Change');
-                                      
+% plot
+fig = plotShockData( data, countries, crop, data_type, title_of_graph, ...
+                      y_axis_label );
+figure(fig); % shows figure
+                  
 % Save reults
-saveas(soybean_prices_fig, 'results\graphs\soybean_prices.fig');
-saveas(soybean_prices_fig, 'results\graphs\soybean_prices.png');
-                                      
-%% Show graphs
-
-figure(corn_prices_fig);
-figure(soybean_prices_fig);
+saveas(fig, 'results\graphs\soybean_prices.fig');
+saveas(fig, 'results\graphs\soybean_prices.png');

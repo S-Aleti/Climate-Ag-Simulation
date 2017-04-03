@@ -63,18 +63,16 @@ for i = 1:size(cf_data,1)
         transfer_to_producer        = output(3);
         consumer_deadweight         = output(4);
         producer_deadweight         = output(5);
-        consumer_surplus_before     = output(6);
-        producer_surplus_before     = output(7);
-        consumer_surplus_after      = output(8);
-        producer_surplus_after      = output(9);
-       
-        %entry(j-1) = {price_change};
         
+        % percent change in surpluses
+        producer_surplus_change     = (output(8)-output(6))/ output(6); 
+        consumer_surplus_change     = (output(9)-output(7))/ output(7); 
+        
+        % fill in entry
         entry(j-1) = {[price_change, quantity_change,                   ...
                         transfer_to_producer, consumer_deadweight,      ...
-                        producer_deadweight, consumer_surplus_before,   ...
-                        producer_surplus_before, consumer_surplus_after,...
-                        producer_surplus_after]};
+                        producer_deadweight, producer_surplus_change,   ...
+                        consumer_surplus_change]};
         
     end
         

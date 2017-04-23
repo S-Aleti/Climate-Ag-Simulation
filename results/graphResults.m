@@ -21,8 +21,8 @@ fig = plotShockData( data, countries, crop, data_type, title_of_graph, ...
 figure(fig); % shows figure
                   
 % Save Results
-%saveas(fig, 'results\graphs\corn_prices.fig');
-%saveas(fig, 'results\graphs\corn_prices.png');
+saveas(fig, 'results\graphs\corn_prices.fig');
+saveas(fig, 'results\graphs\corn_prices.png');
 
 %% Soybeans
 

@@ -17,21 +17,26 @@ function [ alpha_d, beta_d, alpha_s, beta_s ] = calculateCoefficients( ...
 %   beta_s               (scalar) slope of supply curve
 % ========================================================================
 
+%% New Variables for Multiple Commodities
+
+Q = repmat(quantity, 1, size(quantity,1));
+P = repmat(price, 1, size(price,1));
+
 %% Calculate demand function
 
 % slope of the (linear) demand curve 
-beta_d = (elas_D)*(quantity/price);
+beta_d = (elas_D) .* (Q) ./ (P') ;
 
 % intercept of the (linear) demand curve
-alpha_d = quantity - (beta_d)*(price);
+alpha_d = quantity - (beta_d) * (price);
 
 %% Calculate supply function
 
 % slope of (linear) supply curve
-beta_s = (elas_S)*(quantity/price);
+beta_s = (elas_S) .* (Q) ./ (P') ;
 
 % intercept of the (linear) supply curve
-alpha_s = quantity - (beta_s)*(price);
+alpha_s = quantity - (beta_s) * (price);
 
 end
 

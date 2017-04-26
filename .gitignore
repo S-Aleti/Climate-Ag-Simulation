@@ -6,3 +6,10 @@
 
 # Excel backup files
 *.xlk
+
+# LaTex temporary files
+*.aux
+*.log
+*.spl
+*.synctex.gz
+

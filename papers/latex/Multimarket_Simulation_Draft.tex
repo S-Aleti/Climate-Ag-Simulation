@@ -75,10 +75,21 @@ We can then simplify the former equation into $\beta P = \alpha$ and solve to gi
 
 \subsection{Dynamics}
 
-Suppose, however, that all markets did not simultaneously fall into equilibrium. That is, assume the producers for each commodity set prices simultaneously for their commodity's market but not for the entire market consisting of all commodities. Then, at each time step, we have:
-$$Q_{t} = \alpha_d + \beta_d P_t$$
-$$P_{t+1} = \beta_s^{-1} (Q_{t} - \alpha_s)$$
-Here, we can see the consumers simultaneously arrive at purchasing $Q_t$ at time $t$ given price $P_t$. Then, producers react to the quantity purchased by changing prices to $P_{t+1}$. The steady-state for this problem gives us the equilibrium solution. 
+Suppose, however, that all markets did not simultaneously fall into equilibrium. That is, assume the producers for each commodity set prices simultaneously for their commodity's market but not for the entire market consisting of all commodities. Then, after the first supply shock at time $t=1$, we initially solve the following system:
+\begin{align*}
+Q_{1} &= \alpha_s' + \beta_s P_1 \\
+P_{1}& = \alpha_d  + diag(\beta_d) P_1
+\end{align*}
+Here, $diag(\beta_d)$ refers to a matrix consisting only of the diagonal elements of $B_d$. Solving this system then results in a new non-equillibrium price that has yet to take into account shifts in demand due to cross elasticities.
+
+
+Then, at each time step, we have:
+\begin{align*}
+Q_{t} &= \alpha_d + \beta_d P_t \\
+P_{t+1}& = \beta_s^{-1} (Q_{t} - \alpha_s') \\
+Q_{t+1} &= \alpha_s' + \beta_s P_{t+1}
+\end{align*}
+Here, we can see the consumers simultaneously arrive at purchasing $Q_t$ at time $t$ given prices $P_t$. Then, producers react to the new demand curves by changing production to $Q_{t+1}$ and selling at $P_{t+1}$. If $B_s$ is not a diagonal matrix, this stage actually results in a shift in supply curves as farmers start producing different crops to react to the demand. The steady-state for this problem, $P_t \approx P_{t+1}$, gives us the equilibrium solution. \\
 
 To find the steady-state, we first transform this problem into a linear differential equation. So, we begin by computing the change in price at each time $t$:
 \begin{align*}
@@ -98,7 +109,7 @@ To visualize this, the following graph shows the movement of the prices of two c
 	\includegraphics[scale = 0.5]{figures/vector_field}
 \end{center}
 
-However, the existence of an equilibrium point to the diff eq does not necessarily imply that the prices will converge. For example, suppose we have the case where:
+However, the existence of an equilibrium point for this system does not necessarily imply that the prices will converge. For example, suppose we have the case where:
 
 $$| P'_t | \geq | P'_{t-1} | $$
 

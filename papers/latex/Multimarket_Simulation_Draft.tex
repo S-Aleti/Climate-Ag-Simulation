@@ -92,12 +92,27 @@ From this, it follows that the steady-state is achieved when the change in price
 
 $$(\beta_s^{-1} \beta_d - I) P^* = -\beta_s^{-1} \alpha$$
 
-To visualize this, the following graph visualizes the movement of the prices of two commodities towards the equilibrium. In the background is the vector field for this diff eq, and $P_{t=0}^T = (1,2)$ which converges to the equilibrium $(0.875,1.810)$.
+To visualize this, the following graph shows the movement of the prices of two commodities towards the equilibrium. In the background is the vector field for this diff eq. The initial point is $P_{t=0}^T = (1,2)$ which converges to the equilibrium $(0.875,1.810)$.
 
 \begin{center}
-\includegraphics[scale = 0.5]{figures/vector_field}
+	\includegraphics[scale = 0.5]{figures/vector_field}
 \end{center}
 
-Note that this solution does not contain boundary conditions for the prices. So, let us also assume we must have $P_t >= 0$. Then, we know that the market will 
+However, the existence of an equilibrium point to the diff eq does not necessarily imply that the prices will converge. For example, suppose we have the case where:
+
+$$| P'_t | \geq | P'_{t-1} | $$
+
+Here, $P'_t$ refers to the change in price at time $t$. This case is illustrated below, in a different system, where $P_0$ is marked by the red circle. Note that the vector field shows convergence, but the prices by increasingly larger amounts. 
+
+\begin{center}
+	\includegraphics[scale = 0.5]{figures/vector_field2}
+\end{center}
+
+We see that, rather than converging, prices are unstable actually diverge in this system. The equilibrium to the system, if all equations are instead solved simultaneously, is simply $(0.868,1.944)$. Yet, this equilibrium is only stable if it is reached precisely. If we take the system at equilibrium and shift prices by a very small amount, the system again diverges. We can see this in the example below; the initial price was set to be very close but not exactly equal to the equilibrium
+
+\begin{center}
+	\includegraphics[scale = 0.5]{figures/vector_field3}
+\end{center}
+. 
 
 \end{document}

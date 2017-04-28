@@ -22,11 +22,11 @@ function [ output ] = calculateShockCrossEffects( price, quantity, ...
 %% Calculate Original Surpluses
 
 % Consumer surplus
-surplus_C1 = (1/2) * (quantity) .* ( (-alpha_d./diag(beta_d)) - price)
+surplus_C1 = (1/2) * (quantity) .* ( (-alpha_d./diag(beta_d)) - price);
 
 % Producer surplus
 surplus_S1 = (1/2) * (max(0, alpha_s) + quantity)...
-             .* (price - max(0, -alpha_s ./ diag(beta_s)))
+             .* (price - max(0, -alpha_s ./ diag(beta_s)));
 
 %% Introduce Supply Shock
 % New supply schedule: Q = (alpha_s + supply_shock) + beta_s*P
@@ -37,8 +37,12 @@ alpha_s2 = alpha_s + alpha_shock;
 % solve system Dx = Y
 D = beta_d - beta_s;
 Y = alpha_s2 - alpha_d;
-new_price = linsolve(D,Y)
+new_price = linsolve(D,Y);
 new_quantity = alpha_s2 + beta_s*new_price;
+
+% debug
+alpha_s2 + beta_s*new_price;
+alpha_d + beta_d*new_price;
 
 %% Calculate New Surpluses
 

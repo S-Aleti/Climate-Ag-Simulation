@@ -83,13 +83,22 @@ P_{1}& = \alpha_d  + diag(\beta_d) P_1
 Here, $diag(\beta_d)$ refers to a matrix consisting only of the diagonal elements of $B_d$. Solving this system then results in a new non-equillibrium price that has yet to take into account shifts in demand due to cross elasticities.
 
 
-Then, at each time step, we have:
+Assume that each producer $i$ does not expect the market's prices for all commodities but his own to change in the next timestep. Doing so essentially means he best responds to the demand curve for the market at time $t$. The demand curve for commodity $i$ is defined as:
+
+\begin{align*}
+Q_{t,i} &= \alpha_{d,i} + \beta_d P_t \\
+&= \alpha_{d,i} + \sum_{j \neq i} \beta_{d,j} P_{t,j} + \beta_{d,i} P_{t,i}
+\end{align*}
+
+The term $\beta_{d,j}$ refers to the $j^th$ row 
+
+ Then, at each time step, the producer solves:
 \begin{align*}
 Q_{t} &= \alpha_d + \beta_d P_t \\
 P_{t+1}& = \beta_s^{-1} (Q_{t} - \alpha_s') \\
 Q_{t+1} &= \alpha_s' + \beta_s P_{t+1}
 \end{align*}
-Here, we can see the consumers simultaneously arrive at purchasing $Q_t$ at time $t$ given prices $P_t$. Then, producers react to the new demand curves by changing production to $Q_{t+1}$ and selling at $P_{t+1}$. If $B_s$ is not a diagonal matrix, this stage actually results in a shift in supply curves as farmers start producing different crops to react to the demand. The steady-state for this problem, $P_t \approx P_{t+1}$, gives us the equilibrium solution. \\
+Here, at each timestep, producers of commodity $i$ assume that the demand curve will not change in the next timestep; hence, they implicitly assume the prices of other commodities will remain the same in the next timestep. Since all producers make this assumption, the demand curve in the next timestep does not reach equilibrium due to cross price elasticities. However, it does approach the true demand curves for all goods in equilibrium. Iterating through this process where $t \to \infty$ results in the system reaching equilibrium.   \\
 
 To find the steady-state, we first transform this problem into a linear differential equation. So, we begin by computing the change in price at each time $t$:
 \begin{align*}

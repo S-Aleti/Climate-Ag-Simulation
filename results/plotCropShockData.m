@@ -1,8 +1,8 @@
-function [ fig ] = plotShockData( data, countries, crop, data_type, ...
+function [ fig ] = plotCropShockData( data, countries, crop, data_type, ...
                                     title_, y_axis )
 
-% PLOTSHOCKDATA simplifies plotting this model's results by outputting a 
-% plot with some pre-defined parameters
+% PLOTCROPSHOCKDATA simplifies plotting this model's results by outputting 
+% a plot with some pre-defined parameters
 % ========================================================================
 % INPUT ARGUMENTS:
 %   data                 (matrix)     data to plot

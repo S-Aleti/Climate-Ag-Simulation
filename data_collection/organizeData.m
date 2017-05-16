@@ -36,7 +36,6 @@ for i = 1:size(pq_data,1)
     if size(index,2) == 1
         price(index)    = pq_data{i,5};
         quantity(index) = pq_data{i,6};
-        
     end
         
 end

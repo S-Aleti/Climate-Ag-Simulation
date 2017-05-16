@@ -24,6 +24,7 @@ function [ price_t, quantity_t, price_shock, quantity_shock, price_eql, ...
 %   quantity_shock       (vector) quantities after shock
 %   price_eql            (vector) general equillibrium prices
 %   quantity_eql         (vector) general equillibrium quantities
+% ========================================================================
 
 %% Determine Coefficients
 

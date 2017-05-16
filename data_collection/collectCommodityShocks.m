@@ -1,5 +1,5 @@
-function [ alpha_shocks ] = collectCommodityShocks( filename, commodity,...
-                                                    cause_col, shock_col)
+function [ supply_shocks ] = collectCommodityShocks( filename, ...
+                                          commodity, cause_col, shock_col)
 
 % COLLECTCOMMODITYSHOCKS imports shocks to given commodities from an xlsx
 % ========================================================================
@@ -13,7 +13,7 @@ function [ alpha_shocks ] = collectCommodityShocks( filename, commodity,...
 %                                 supply shock
 % ========================================================================
 % OUTPUT:
-%   alpha_shocks         (matrix) supply shock data from xlsx
+%   supply_shocks        (matrix) supply shock data from xlsx
 % ========================================================================
 
 %% Open xlsx file
@@ -24,7 +24,7 @@ function [ alpha_shocks ] = collectCommodityShocks( filename, commodity,...
 
 %% Process Data
 
-alpha_shocks = {};
+supply_shocks = {};
 
 % open waitbar
 h = waitbar(0,'Collecting counterfactual data');
@@ -44,7 +44,7 @@ for i = 2:size(xls_raw,1)
                   cell2mat(xls_raw(i, shock_col))}; 
 
         % add information collected to data (cell array)
-        alpha_shocks = [alpha_shocks; output]; %#ok<AGROW>
+        supply_shocks = [supply_shocks; output]; %#ok<AGROW>
                   
     else % if no data 
         

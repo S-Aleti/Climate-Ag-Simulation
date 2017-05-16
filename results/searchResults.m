@@ -1,6 +1,6 @@
-function [ filtered_data ] = findResults( data, country, commodity, type)
+function [ filtered_data ] = searchResults( data, country, commodity, type)
                                                 
-% FIND RESULTS Searches cell array for results of the given type pertaining
+% SEARCHRESULTS Searches cell array for results of the given type pertaining
 % to country and commodity commodity 
 % ========================================================================
 % INPUT ARGUMENTS:

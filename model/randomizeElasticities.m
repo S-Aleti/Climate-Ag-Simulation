@@ -29,10 +29,16 @@ elas_D2 = elas_D + rv_D;
 elas_S2 = elas_S + rv_S;
 
 % Replace instances where signs flipped with 0
-ind = find((sign(elas_D) + sign(elas_D2)) == 0);
-elas_D2(ind) = 0;
+ind = find((sign(diag(elas_D)) + sign(diag(elas_D2))) == 0);
+for i = 1:length(ind)
+    j = ind(i);
+    elas_D2(j, j) = 0;
+end
 
-ind = find((sign(elas_S) + sign(elas_S2)) == 0);
-elas_S2(ind) = 0;
+ind = find((sign(diag(elas_S)) + sign(diag(elas_S2))) == 0);
+for i = 1:length(ind)
+    j = ind(i);
+    elas_S2(j, j) = 0;
+end
 
 end

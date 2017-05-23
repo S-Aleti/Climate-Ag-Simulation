@@ -1,18 +1,13 @@
-% table for price changes
-% compute rebound effect which is the fall in gasoline supply
-% price change for various shocks
-% gasoline 95 gco2/mj of emissions, 131.76 mJ/gallon
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Runs Monte Carlo trails on the KDI Data %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 close all
-
 
 %% Parameters
 
 % commodities to analyze
 commodities = {'gasoline', 'electricity', 'natural gas'};
-
-% define percent changes in quantity (>1 for positive supply shocks)
-percent_change = [0.05:0.10:0.25] + 1;
 
 % iterations for the market simulation
 iterations = 15;
@@ -132,15 +127,15 @@ bins = 20;
 fig = figure;
 
 for i = 1:length(percent_change)
-    h(i) = histogram(reshape(percent_price_change(j,i,:),1,trials),bins);
-    set(h(i),'DisplayName',[num2str(percent_change(i)-1), '% shock']);
+    h(i) = histogram(reshape(100*percent_price_change(j,i,:),1,trials),bins);
+    set(h(i),'DisplayName',[num2str(100*(percent_change(i)-1)), '% shock']);
     hold on;
 end
 
 lgd = legend('show');
 xlabel('Price change (%)');
 ylabel(['Frequency', ' (max: ', num2str(trials), ')']);
-title(['Change in price of ', commodities{j}, ' after supply shocks']);
+title(['Change in price of fuel after supply shocks']);
 grid on;
 
 
@@ -148,10 +143,27 @@ grid on;
 fig = figure;
 
 for i = 1:length(percent_change)
-    h(i) = histogram(reshape(percent_quantity_change(j,i,:),1,trials),bins);
-    set(h(i),'DisplayName',[num2str(percent_change(i)-1), '% shock']);
+    h(i) = histogram(reshape(100*percent_quantity_change(j,i,:),1,trials),bins);
+    set(h(i),'DisplayName',[num2str(100*(percent_change(i)-1)), '% shock']);
     hold on;
 end
+
+lgd = legend('show');
+xlabel('Quantity change (%)');
+ylabel(['Frequency', ' (max: ', num2str(trials), ')']);
+title(['Change in quantity of fuel after supply shocks']);
+grid on;
+
+
+% Rebound effect
+fig = figure;
+
+for i = 1:length(percent_change)
+    h(i) = histogram(reshape(100*percent_quantity_rebound(j,i,:),1,trials),bins);
+    set(h(i),'DisplayName',[num2str(100*(percent_change(i)-1)), '% shock']);
+    hold on;
+end
+
 
 lgd = legend('show');
 xlabel('Quantity change (%)');
@@ -160,29 +172,12 @@ title(['Change in quantity of ', commodities{j}, ' after supply shocks']);
 grid on;
 
 
-% Rebound effect
-fig = figure;
-
-for i = 1:length(percent_change)
-    h(i) = histogram(reshape(percent_quantity_rebound(j,i,:),1,trials),bins);
-    set(h(i),'DisplayName',[num2str(percent_change(i)-1), '% shock']);
-    hold on;
-end
-
-
-lgd = legend('show');
-xlabel('Rebound effect (%)');
-ylabel(['Frequency', ' (max: ', num2str(trials), ')']);
-title(['Rebound effect of ', commodities{j}, ' after supply shocks']);
-grid on;
-
-
 % CO2 reduction
 fig = figure;
 
 for i = 1:length(percent_change)
     h(i) = histogram(reshape(CO2_reduction_megatonnes(1,i,:),1,trials),bins);
-    set(h(i),'DisplayName',[num2str(percent_change(i)-1), '% shock']);
+    set(h(i),'DisplayName',[num2str(100*(percent_change(i)-1)), '% shock']);
     hold on;
 end
 

@@ -27,10 +27,13 @@ n = size(elas,2);
 switch rv_type
     case 'triangle'
         rv = arg2 + sqrt(rand(1)).*(arg1-arg2 + rand(1)*(elas-arg1));
+        elas_randomized = rv;
     case 'uniform'
         rv = unifrnd(arg1, arg2, m, n);
+        elas_randomized = elas + rv;
     case 'normal'
         rv = normrnd(0, arg1, m, n);
+        elas_randomized = elas + rv;
     otherwise
         error('Unknown distribution type')
 end
@@ -46,6 +49,5 @@ for i = 1:length(ind)
     j = ind(i);
     elas_randomized(j, j) = 0;
 end
-
 
 end

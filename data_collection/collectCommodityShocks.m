@@ -40,7 +40,8 @@ for i = 2:size(xls_raw,1)
              isCellEmpty(xls_raw(i, shock_col))))
             
         % process code and extract elasticity 
-        output = {strtrim(cell2mat(xls_raw(i, cause_col))),        ...
+        output = {[strtrim(cell2mat(xls_raw(i, cause_col-1))), ': ' , ...
+                  strtrim(cell2mat(xls_raw(i, cause_col)))],          ...
                   cell2mat(xls_raw(i, shock_col))}; 
 
         % add information collected to data (cell array)

@@ -1,5 +1,5 @@
 % =======================================================================
-% The following code calculates the effects of biomass shocks given in 
+% The following code calculates the effects of biofuel shocks given in 
 % KDI_supply_shocks.xlsx and stores the results in the variable
 % "formatted data," which is formatted to match the spreadsheet 
 % KDI_results.xlsx in the results folder
@@ -13,7 +13,7 @@ close all
 commodities = {'gasoline', 'electricity', 'natural gas'};
 
 % commodity to shock
-shock_commodity = 'electricity';
+shock_commodity = 'gasoline';
 
 % iterations for the market simulation
 iterations = 15;

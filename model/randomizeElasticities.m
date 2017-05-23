@@ -1,44 +1,51 @@
-function [ elas_D2, elas_S2 ] = randomizeElasticities( elas_D, elas_S, ...
-                                                       sigma_D, sigma_S )
+function [ elas_randomized ] = randomizeElasticities( elas, rv_type, ...
+                                                      arg1, arg2 )
 
-% RANDOMIZEELASTICITIES adds a normally distributed random variable to 
-% a set of given elasticities
+% RANDOMIZEELASTICITIES adds a specified type of random variable to a set 
+% of given elasticities
 % ========================================================================
 % INPUT ARGUMENTS:
-%   elas_D               (matrix)  diagonal entries are elasticity of demand
-%                                  and non-diagonal entries are cross elas
-%   elas_S               (matrix)  same as elas_D but for supply
-%   sigma_D              (scalar)  standard deviation of normal RV added to
-%                                  the demand elasticities
-%   sigma_S              (scalar)  same as sigma_D but for supply 
+%   elas                 (matrix)  contains elasticities; diagonal entries
+%                                  are own price elasticities, others are
+%                                  cross price elasticities
+%   rv_type              (string)  type of distribution to use for the RV;
+%                                  'triangle', 'uniform', or 'normal'
+%   arg1                 (matrix)  use varies; lower bound for triangle and
+%                                  uniform dist or stdev for normal dist
+%   arg2                 (matrix)  use varies: upper bound for triangle 
+%                                  or uniform dist, ignored for normal dist 
 % ========================================================================
 % OUTPUT:
-%   elas_D2              (matrix)  demand elasticities with added RV
-%   elas_S2              (matrix)  supply elasticities with added RV
+%   elas_randomized      (matrix)  elasticities with added RV
 % ========================================================================
 
 %% Generate random vars
 
-rv_D = normrnd(0, sigma_D, size(elas_D,1), size(elas_D,2));
-rv_S = normrnd(0, sigma_S, size(elas_S,1), size(elas_S,2));
+m = size(elas,1);
+n = size(elas,2);
+
+switch rv_type
+    case 'triangle'
+        rv = arg2 + sqrt(rand(1)).*(arg1-arg2 + rand(1)*(elas-arg1));
+    case 'uniform'
+        rv = unifrnd(arg1, arg2, m, n);
+    case 'normal'
+        rv = normrnd(0, arg1, m, n);
+    otherwise
+        error('Unknown distribution type')
+end
 
 
 %% Add random vars to elasticities
 
-elas_D2 = elas_D + rv_D;
-elas_S2 = elas_S + rv_S;
+elas_randomized = elas + rv;
 
 % Replace instances where signs flipped with 0
-ind = find((sign(diag(elas_D)) + sign(diag(elas_D2))) == 0);
+ind = find((sign(diag(elas)) + sign(diag(elas_randomized))) == 0);
 for i = 1:length(ind)
     j = ind(i);
-    elas_D2(j, j) = 0;
+    elas_randomized(j, j) = 0;
 end
 
-ind = find((sign(diag(elas_S)) + sign(diag(elas_S2))) == 0);
-for i = 1:length(ind)
-    j = ind(i);
-    elas_S2(j, j) = 0;
-end
 
 end

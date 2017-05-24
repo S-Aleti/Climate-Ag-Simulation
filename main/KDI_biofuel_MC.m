@@ -155,106 +155,73 @@ toc
 
 close all
 
-% Params
-bins = 14;
-bins_rebound = 35;
-outlier_threshold = -1; % cuts off percent change graphs at -100%
+% PARAMS
+
+% truncates % change graphs at -100%
+percent_change_outlier_threshold = [-1, inf]; 
+% drops samples outside 3 standard deviations
+stdev_threshold = 3; 
+
+legend_labels = cell(1,length(percent_supply_shocks));
+for i = 1:length(legend_labels)
+    legend_labels{i} = [num2str(100*percent_supply_shocks(i)), '% shock'];
+end
+
 
 %%% Price changes
-fig = figure;
+data       = percent_price_change(row,:,:);
+plot_title = 'Change in price of electricity after supply shocks';
+x_label    = 'Price Change (%)';
+y_label    = 'Probability';
+bins       = 20;
 
-for i = 1:length(alpha_shocks)
-    
-    % remove outliers
-    plot_data = percent_price_change(row,i,:);
-    plot_data(plot_data < outlier_threshold) = outlier_threshold;
-    
-    % plot
-    h(i) = histogram(reshape(100*plot_data,1, trials), bins, ...
-        'Normalization', 'probability');
-    set(h(i),'DisplayName',[num2str(100*(percent_supply_shocks(i))), '% shock']);
-    h(i).BinWidth = h(1).BinWidth;
-    hold on;
-    
-end
+plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
+                bins, percent_change_outlier_threshold,  stdev_threshold);
 
-lgd = legend('show');
-xlabel('Price change (%)');
-ylabel('Probability');
-title('Change in price of fuel after supply shocks');
-grid on;
-
-
+            
 %%% Quantity changes
-fig = figure;
 
-for i = 1:length(alpha_shocks)
-    
-    % remove outliers
-    plot_data = percent_quantity_change(row,i,:);
-    plot_data(plot_data < outlier_threshold) = outlier_threshold;
-    
-    % plot
-    h(i) = histogram(reshape(100*plot_data,1, trials), bins, ...
-        'Normalization', 'probability');
-    set(h(i),'DisplayName',[num2str(100*(percent_supply_shocks(i))), '% shock']);
-    h(i).BinWidth = h(1).BinWidth;
-    hold on;
-    
-end
+data       = percent_quantity_change(row,:,:);
+plot_title = 'Change in quantity of electricity after supply shocks';
+x_label    = 'Quantity Change (%)';
+y_label    = 'Probability';
+bins       = 8;
 
-lgd = legend('show');
-xlabel('Quantity change (%)');
-ylabel('Probability');
-title('Change in quantity of fuel after supply shocks');
-grid on;
+plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
+                bins, percent_change_outlier_threshold,  stdev_threshold);
 
+          
+%%% Quantity changes in non-biomass derived electricity
 
-% Rebound effect
-fig = figure;
+data       = percent_quantity_rebound(row,:,:);
+plot_title = ['Change in quantity of non-biomass-derived electricity', ...
+                'after supply shocks'];
+x_label    = 'Quantity Change (%)';
+y_label    = 'Probability';
+bins       = 15;
 
-for i = 1:length(alpha_shocks)
-    
-    plot_data = rebound_effect(row, i, :);
-    
-    % plot
-    h(i) = histogram(reshape(plot_data,1, trials), bins_rebound, ...
-        'Normalization', 'probability');
-    set(h(i),'DisplayName',[num2str(100*(percent_supply_shocks(i))), '% shock']);
-    h(i).BinWidth = h(1).BinWidth;
-    hold on;
-    
-end
+plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
+                bins, percent_change_outlier_threshold,  stdev_threshold);
 
+%%% Rebound effect
 
-lgd = legend('show');
-xlabel('Rebound Effect');
-ylabel('Probability');
-title(['Rebound effect on fuel after supply shocks']);
-grid on;
+data       = rebound_effect(row,:,:);
+plot_title = 'Rebound effect on electricity after supply shocks';
+x_label    = 'Rebound Effect';
+y_label    = 'Probability';
+bins       = 30;
 
+plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
+                bins, [-inf, inf],  stdev_threshold);
 
-% CO2 reduction
-fig = figure;
+            
+%%% CO2 reduction
 
-for i = 1:length(alpha_shocks)
-    
-    % remove outliers
-    plot_data = CO2_reduction_megatonnes(1,i,:);
-    std_outlier_threshold = mean(plot_data) + 3*std(plot_data);
-    plot_data(abs(plot_data) > std_outlier_threshold) = [];
-    
-    h(i) = histogram(reshape(plot_data,1,size(plot_data,3)), ...
-           bins, 'Normalization', 'probability');
-    set(h(i),'DisplayName',[num2str(100*(percent_supply_shocks(i))), '% shock']);
-    h(i).BinWidth = h(1).BinWidth;
-    hold on;
-    
-end
+data       = CO2_reduction_megatonnes(1,:,:);
+plot_title = 'CO2 reduction after supply shocks';
+x_label    = 'CO2 Reduction (megatonnes)';
+y_label    = 'Probability';
+bins       = 30;
 
-lgd = legend('show');
-xlabel('CO2 Reduction (megatonnes)');
-ylabel('Probability');
-title(['CO2 reduction after supply shocks']);
-grid on;
-
+plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
+                bins, [-inf, inf],  stdev_threshold);

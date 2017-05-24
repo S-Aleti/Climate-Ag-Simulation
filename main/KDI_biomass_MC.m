@@ -173,7 +173,7 @@ data       = percent_price_change(row,:,:);
 plot_title = 'Change in price of electricity after supply shocks';
 x_label    = 'Price Change (%)';
 y_label    = 'Probability';
-bins       = 20;
+bins       = 12;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, percent_change_outlier_threshold,  stdev_threshold);
@@ -185,31 +185,32 @@ data       = percent_quantity_change(row,:,:);
 plot_title = 'Change in quantity of electricity after supply shocks';
 x_label    = 'Quantity Change (%)';
 y_label    = 'Probability';
-bins       = 8;
+bins       = 12;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, percent_change_outlier_threshold,  stdev_threshold);
 
-          
+        
 %%% Quantity changes in non-biomass derived electricity
 
 data       = percent_quantity_rebound(row,:,:);
 plot_title = ['Change in quantity of non-biomass-derived electricity', ...
-                'after supply shocks'];
+                ' after supply shocks'];
 x_label    = 'Quantity Change (%)';
 y_label    = 'Probability';
-bins       = 15;
+bins       = 14;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, percent_change_outlier_threshold,  stdev_threshold);
 
+            
 %%% Rebound effect
 
 data       = rebound_effect(row,:,:);
 plot_title = 'Rebound effect on electricity after supply shocks';
 x_label    = 'Rebound Effect';
 y_label    = 'Probability';
-bins       = 30;
+bins       = 40;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, [-inf, inf],  stdev_threshold);
@@ -221,7 +222,7 @@ data       = CO2_reduction_megatonnes(1,:,:);
 plot_title = 'CO2 reduction after supply shocks';
 x_label    = 'CO2 Reduction (megatonnes)';
 y_label    = 'Probability';
-bins       = 30;
+bins       = 12;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, [-inf, inf],  stdev_threshold);

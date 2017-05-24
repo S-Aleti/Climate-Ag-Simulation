@@ -170,10 +170,10 @@ end
 
 %%% Price changes
 data       = percent_price_change(row,:,:);
-plot_title = 'Change in price of electricity after supply shocks';
+plot_title = 'Change in price of fuel after supply shocks';
 x_label    = 'Price Change (%)';
 y_label    = 'Probability';
-bins       = 20;
+bins       = 12;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, percent_change_outlier_threshold,  stdev_threshold);
@@ -182,10 +182,10 @@ plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
 %%% Quantity changes
 
 data       = percent_quantity_change(row,:,:);
-plot_title = 'Change in quantity of electricity after supply shocks';
+plot_title = 'Change in quantity of fuel after supply shocks';
 x_label    = 'Quantity Change (%)';
 y_label    = 'Probability';
-bins       = 8;
+bins       = 10;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, percent_change_outlier_threshold,  stdev_threshold);
@@ -194,11 +194,10 @@ plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
 %%% Quantity changes in non-biomass derived electricity
 
 data       = percent_quantity_rebound(row,:,:);
-plot_title = ['Change in quantity of non-biomass-derived electricity', ...
-                'after supply shocks'];
+plot_title = 'Change in quantity of gasoline after supply shocks';
 x_label    = 'Quantity Change (%)';
 y_label    = 'Probability';
-bins       = 15;
+bins       = 12;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, percent_change_outlier_threshold,  stdev_threshold);
@@ -206,7 +205,7 @@ plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
 %%% Rebound effect
 
 data       = rebound_effect(row,:,:);
-plot_title = 'Rebound effect on electricity after supply shocks';
+plot_title = 'Rebound effect on gasoline after supply shocks';
 x_label    = 'Rebound Effect';
 y_label    = 'Probability';
 bins       = 30;
@@ -221,7 +220,7 @@ data       = CO2_reduction_megatonnes(1,:,:);
 plot_title = 'CO2 reduction after supply shocks';
 x_label    = 'CO2 Reduction (megatonnes)';
 y_label    = 'Probability';
-bins       = 30;
+bins       = 15;
 
 plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                 bins, [-inf, inf],  stdev_threshold);

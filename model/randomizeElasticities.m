@@ -19,35 +19,44 @@ function [ elas_randomized ] = randomizeElasticities( elas, rv_type, ...
 %   elas_randomized      (matrix)  elasticities with added RV
 % ========================================================================
 
-%% Generate random vars
+%% Main
 
 m = size(elas,1);
 n = size(elas,2);
 
-switch rv_type
+switch lower(rv_type)
+    
     case 'triangle'
         rv = arg2 + sqrt(rand(1)).*(arg1-arg2 + rand(1)*(elas-arg1));
         elas_randomized = rv;
+        
     case 'uniform'
         rv = unifrnd(arg1, arg2, m, n);
-        elas_randomized = elas + rv;
+        elas_randomized = rv;
+        
     case 'normal'
         rv = normrnd(0, arg1, m, n);
+        
+        % use truncated normal for own price elasticities
+        for i = 1:length(elas)
+            
+            % create normal distribution object
+            normal_dist = makedist('Normal', 0, arg1);
+            
+            % truncate based on elasticity
+            if elas(i,i) > 0
+                normal_dist_trun = truncate(normal_dist, -elas(i,i), 100);
+            else
+                normal_dist_trun = truncate(normal_dist, -100, -elas(i,i));
+            end
+
+            rv(i,i) = random(normal_dist_trun);
+        end
+        
         elas_randomized = elas + rv;
+        
     otherwise
         error('Unknown distribution type')
-end
-
-
-%% Add random vars to elasticities
-
-elas_randomized = elas + rv;
-
-% Replace instances where signs flipped with 0
-ind = find((sign(diag(elas)) + sign(diag(elas_randomized))) == 0);
-for i = 1:length(ind)
-    j = ind(i);
-    elas_randomized(j, j) = 0;
 end
 
 end

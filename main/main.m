@@ -10,4 +10,4 @@ data = analyzeShocks(epq_data, cf_data);
 
 %% Graph Results
 
-%graphResults
+graphResults

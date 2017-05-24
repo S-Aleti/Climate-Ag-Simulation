@@ -29,7 +29,7 @@ filtered_data = zeros(length(countries), size(data,2)-3);
 % add data specific to each country
 for i = 1:length(countries)
     
-    cell_data = findResults(data, countries{i}, crop, data_type);
+    cell_data = searchResults(data, countries{i}, crop, data_type);
     
     if isempty(cell_data)
         error(['No data found for ' , countries{i}, ', ' , crop]);

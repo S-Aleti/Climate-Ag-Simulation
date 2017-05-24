@@ -16,7 +16,7 @@ y_axis_label   = '% change in surplus';
 
 
 % plot
-fig = plotShockData( data, countries, crop, data_type, title_of_graph, ...
+fig = plotCropShockData( data, countries, crop, data_type, title_of_graph, ...
                       y_axis_label );
 figure(fig); % shows figure
                   
@@ -35,7 +35,7 @@ y_axis_label   = '% change in surplus';
 
 
 % plot
-fig = plotShockData( data, countries, crop, data_type, title_of_graph, ...
+fig = plotCropShockData( data, countries, crop, data_type, title_of_graph, ...
                       y_axis_label );
 figure(fig); % shows figure
                   

@@ -74,9 +74,11 @@ percent_quantity_change = quantity_change ./ repmat(quantity, 1, n);
 quantity_after_shock = repmat(quantity,1,n) + alpha_shocks;
 
 % Rebound effect
-quantity_rebound = quantity_eqls - quantity_after_shock;
-percent_quantity_rebound = quantity_rebound ./ quantity_after_shock;
-
+quantity_rebound = quantity_eqls(row,:) - quantity_after_shock(row,:);
+percent_quantity_rebound = quantity_rebound ./ quantity_after_shock(row,:);
+rebound_effect = (percent_supply_shocks +  percent_quantity_rebound) ...
+                 ./ percent_supply_shocks;
+             
 % Decrease in CO2
 CO2_reduction_grams = -quantity_rebound(1,:)*95*131.76;
 CO2_reduction_megatonnes = CO2_reduction_grams*10^(-6);
@@ -84,7 +86,8 @@ CO2_reduction_megatonnes = CO2_reduction_grams*10^(-6);
 % Formatted Data for xlsx
 formatted_data = [percent_supply_shocks', percent_price_change',       ...
                   percent_quantity_change', percent_quantity_rebound', ...
-                  CO2_reduction_megatonnes'];
+                  rebound_effect', CO2_reduction_megatonnes'];
+
 
 %% Plot Results
 

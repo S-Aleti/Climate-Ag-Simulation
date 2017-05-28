@@ -17,13 +17,13 @@ commodities = {'gasoline', 'electricity', 'natural gas'};
 shock_commodity = 'gasoline';
 
 % percent shocks can be specified manually here
-percent_shocks = [0.05:0.10:0.35] + 1;
+percent_shocks = [0.05,0.35] + 1;
 
 % iterations for the market simulation
 iterations = 15;
 
 % SPECIFY HERE WHETHER TO USE KDI SHOCKS OR PREDEFINED PERCENT SHOCKS
-use_KDI_shocks = false;
+use_KDI_shocks = true;
 
 
 %% Import Data
@@ -66,7 +66,7 @@ alpha_shocks(row,:) = shock_data;
 
 % params
 sigma = 0.05; % stdev of normal dist added to randomize elasticities
-trials = 2000;
+trials = 500;
 plot_results = false; 
 
 % preallocate arrays
@@ -98,7 +98,7 @@ for trial = 1:trials
     ind = find(~cellfun(@isempty,strfind(commodities, 'gasoline')));
     % based on Dahl and Sterner
     elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
-                        'uniform', -1.05, -0.16 ); 
+                        'triangle', -1.05, -0.16 ); 
     
     % electricity own price demand elas is taken from a normal dist
     ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
@@ -143,7 +143,20 @@ for trial = 1:trials
     % Decrease in CO2
     CO2_reduction_grams(:,:,trial) = -quantity_rebound(1,:,trial)*95*131.76;
     CO2_reduction_megatonnes(:,:,trial) = CO2_reduction_grams(:,:,trial)*10^(-6);
-
+    
+    % Formatted Data for xlsx
+    p_idx = [2, 1, 3]; % permutes a 3D matrix
+    formatted_data = [permute(repmat( ...
+                         percent_supply_shocks, 1, 1, 500), p_idx), ...
+                      permute(percent_price_change, p_idx),       ...
+                      permute(percent_quantity_change, p_idx),    ...
+                      permute(percent_quantity_rebound, p_idx),   ...
+                      permute(rebound_effect, p_idx),             ...
+                      permute(CO2_reduction_megatonnes, p_idx)];
+                  
+    data_mean     = mean(formatted_data, 3);
+    data_5th_pct  = quantile(formatted_data, 0.05, 3);
+    data_95th_pct = quantile(formatted_data, 0.95, 3);
                     
 end
 
@@ -154,6 +167,11 @@ toc
 %% Plot results for commodity shocked
 
 close all
+
+% don't plot KDI shocks (nonsensical plots)
+if use_KDI_shocks
+    return;     
+end
 
 % PARAMS
 

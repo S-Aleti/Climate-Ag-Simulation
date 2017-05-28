@@ -144,7 +144,20 @@ for trial = 1:trials
     CO2_reduction_grams(:,:,trial) = -quantity_rebound(1,:,trial)*95*131.76;
     CO2_reduction_megatonnes(:,:,trial) = CO2_reduction_grams(:,:,trial)*10^(-6);
 
-                    
+    % Formatted Data for xlsx
+    p_idx = [2, 1, 3]; % permutes a 3D matrix
+    formatted_data = [permute(repmat( ...
+                         percent_supply_shocks, 1, 1, 500), p_idx), ...
+                      permute(percent_price_change, p_idx),       ...
+                      permute(percent_quantity_change, p_idx),    ...
+                      permute(percent_quantity_rebound, p_idx),   ...
+                      permute(rebound_effect, p_idx),             ...
+                      permute(CO2_reduction_megatonnes, p_idx)];
+                  
+    data_mean     = mean(formatted_data, 3);
+    data_5th_pct  = quantile(formatted_data, 0.05, 3);
+    data_95th_pct = quantile(formatted_data, 0.95, 3);        
+    
 end
 
 close(h);

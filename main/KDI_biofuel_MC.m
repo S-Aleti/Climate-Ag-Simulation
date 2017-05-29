@@ -11,13 +11,13 @@ close all
 %% Parameters
 
 % commodities to analyze
-commodities = {'gasoline', 'electricity', 'natural gas'};
+commodities = {'fuel', 'electricity', 'natural gas'};
 
 % commodity to shock
-shock_commodity = 'gasoline';
+shock_commodity = 'fuel';
 
 % percent shocks can be specified manually here
-percent_shocks = [0.05,0.35] + 1;
+percent_shocks = [0.05:0.05:1.00] + 1;
 
 % iterations for the market simulation
 iterations = 15;
@@ -66,7 +66,7 @@ alpha_shocks(row,:) = shock_data;
 
 % params
 sigma = 0.05; % stdev of normal dist added to randomize elasticities
-trials = 500;
+trials = 1000;
 plot_results = false; 
 
 % preallocate arrays
@@ -255,7 +255,7 @@ else
     % use predefined % shocks as labels
     labels = {};
     for i = 1:length(percent_shocks)
-        labels{i} = [num2str(percent_shocks(i)-1), '% shock'];
+        labels{i} = [num2str(100*(percent_shocks(i)-1)), '%_shock'];
     end
 end
 
@@ -267,8 +267,8 @@ header = {['% Change in the Price of ', commodities{1}],               ...
           ['% Change in the Quantity of ', commodities{1}],            ...
           ['% Change in the Quantity of ', commodities{2}],            ...
           ['% Change in the Quantity of ', commodities{3}],            ...   
-          ['% Change in the Quantity of Non-Biomass Electricity'],     ...
-          ['Rebound effect on electricity'],                           ...
+          ['% Change in the Quantity of Gasoline'],                    ...
+          ['Rebound effect on gasoline'],                              ...
           ['CO2 Reduction (megatonnes)']};
 
 for i = 1:length(labels)
@@ -279,7 +279,9 @@ for i = 1:length(labels)
     
     % format label
     label = labels{i};
-    label(find(~isletter(label))) = '_'; 
+    if use_KDI_shocks
+        label(find(~isletter(label))) = '_'; 
+    end
     label = ['results/csv/biofuel/', label, '.csv'];
     
     % write to file

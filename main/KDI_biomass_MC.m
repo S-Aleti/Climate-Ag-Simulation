@@ -11,7 +11,7 @@ close all
 %% Parameters
 
 % commodities to analyze
-commodities = {'gasoline', 'electricity', 'natural gas'};
+commodities = {'fuel', 'electricity', 'natural gas'};
 
 % commodity to shock
 shock_commodity = 'electricity';
@@ -66,7 +66,7 @@ alpha_shocks(row,:) = shock_data;
 
 % params
 sigma = 0.05; % stdev of normal dist added to randomize elasticities
-trials = 500;
+trials = 1000;
 plot_results = false; 
 
 % preallocate arrays
@@ -257,7 +257,7 @@ else
     % use predefined % shocks as labels
     labels = {};
     for i = 1:length(percent_shocks)
-        labels{i} = [num2str(percent_shocks(i)-1), '% shock'];
+        labels{i} = [num2str(100*(percent_shocks(i)-1)), '%_shock'];
     end
 end
 
@@ -281,8 +281,11 @@ for i = 1:length(labels)
     
     % format label
     label = labels{i};
-    label(find(~isletter(label))) = '_'; 
-    label = ['results/csv/biofuel/', label, '.csv'];
+    if use_KDI_shocks
+        label(find(~isletter(label))) = '_'; 
+    end
+    label = ['results/csv/biomass/', label, '.csv'];
+        
     
     % write to file
     csvwriteh(label, temp_data, header);

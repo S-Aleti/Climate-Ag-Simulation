@@ -209,7 +209,7 @@ if ~use_KDI_shocks
 
     %%% Quantity changes in non-biomass derived electricity
 
-    data       = percent_quantity_rebound(row,:,:);
+    data       = percent_quantity_rebound(1,:,:);
     plot_title = 'Change in quantity of gasoline after supply shocks';
     x_label    = 'Quantity Change (%)';
     y_label    = 'Probability';
@@ -220,7 +220,7 @@ if ~use_KDI_shocks
 
     %%% Rebound effect
 
-    data       = rebound_effect(row,:,:);
+    data       = rebound_effect(1,:,:);
     plot_title = 'Rebound effect on gasoline after supply shocks';
     x_label    = 'Rebound Effect';
     y_label    = 'Probability';

@@ -17,13 +17,13 @@ commodities = {'gasoline', 'electricity', 'natural gas'};
 shock_commodity = 'electricity';
 
 % percent shocks can be specified manually here
-percent_shocks = [0.05:0.10:0.25] + 1;
+percent_shocks = [0.05:0.05:1.00] + 1;
 
 % iterations for the market simulation
 iterations = 15;
 
 % SPECIFY HERE WHETHER TO USE KDI SHOCKS OR PREDEFINED PERCENT SHOCKS
-use_KDI_shocks = true;
+use_KDI_shocks = false;
 
 
 %% Import Data
@@ -209,7 +209,7 @@ if ~use_KDI_shocks
 
     %%% Quantity changes in non-biomass derived electricity
 
-    data       = percent_quantity_rebound(row,:,:);
+    data       = percent_quantity_rebound(1,:,:);
     plot_title = ['Change in quantity of non-biomass-derived electricity', ...
                     ' after supply shocks'];
     x_label    = 'Quantity Change (%)';
@@ -222,7 +222,7 @@ if ~use_KDI_shocks
 
     %%% Rebound effect
 
-    data       = rebound_effect(row,:,:);
+    data       = rebound_effect(1,:,:);
     plot_title = 'Rebound effect on electricity after supply shocks';
     x_label    = 'Rebound Effect';
     y_label    = 'Probability';

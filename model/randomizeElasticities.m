@@ -35,7 +35,12 @@ switch lower(rv_type)
         elas_randomized = rv;
         
     case 'normal'
-        rv = normrnd(0, arg1, m, n);
+        if arg1 > 0
+            rv = normrnd(0, arg1, m, n);
+        else
+            elas_randomized = elas;
+            return;
+        end
         
         % use truncated normal for own price elasticities
         for i = 1:length(elas)

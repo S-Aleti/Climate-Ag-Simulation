@@ -81,7 +81,7 @@ percent_quantity_rebound  = price_change(1,:,:);
 rebound_effect            = price_change(1,:,:);
 percent_supply_shocks     = price_change(1,:,1);
 CO2_reduction_grams       = price_change(1,:,:);
-CO2_reduction_megatonnes  = CO2_reduction_grams;
+CO2_reduction_tonnes  = CO2_reduction_grams;
 
 tic
 % open waitbar
@@ -144,7 +144,7 @@ for trial = 1:trials
     CO2_reduction = 95*131.76;
     CO2_reduction_grams(:,:,trial) = -quantity_rebound(1,:,trial) * ...
                                         CO2_reduction;
-    CO2_reduction_megatonnes(:,:,trial) = CO2_reduction_grams(:,:,trial)*10^(-6);
+    CO2_reduction_tonnes(:,:,trial) = CO2_reduction_grams(:,:,trial)*10^(-6);
 
     % Formatted Data for xlsx
     p_idx = [2, 1, 3]; % permutes a 3D matrix
@@ -154,7 +154,7 @@ for trial = 1:trials
                       permute(percent_quantity_change, p_idx),         ...
                       permute(percent_quantity_rebound, p_idx),        ...
                       permute(rebound_effect, p_idx),                  ...
-                      permute(CO2_reduction_megatonnes, p_idx)];
+                      permute(CO2_reduction_tonnes, p_idx)];
                   
     % Summary stats
     data_mean     = mean(formatted_data, 3);
@@ -239,9 +239,9 @@ if ~use_KDI_shocks
 
     %%% CO2 reduction
 
-    data       = CO2_reduction_megatonnes(1,:,:);
+    data       = CO2_reduction_tonnes(1,:,:);
     plot_title = 'CO2 reduction after supply shocks';
-    x_label    = 'CO2 Reduction (megatonnes)';
+    x_label    = 'CO2 Reduction (tonnes)';
     y_label    = 'Probability';
     bins       = 15;
 
@@ -276,7 +276,7 @@ header = {['% Change in the Price of ', commodities{1}],               ...
           ['% Change in the Quantity of ', commodities{3}],            ...   
           ['% Change in the Quantity of Gasoline'],                    ...
           ['Rebound effect on gasoline'],                              ...
-          ['CO2 Reduction (megatonnes)']};
+          ['CO2 Reduction (tonnes)']};
 
 for i = 1:length(labels)
     

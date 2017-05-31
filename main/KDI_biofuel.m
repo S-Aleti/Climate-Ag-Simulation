@@ -10,10 +10,10 @@ close all
 %% Parameters
 
 % commodities to analyze
-commodities = {'gasoline', 'electricity', 'natural gas'};
+commodities = {'fuel', 'electricity', 'natural gas'};
 
 % commodity to shock
-shock_commodity = 'gasoline';
+shock_commodity = 'fuel';
 
 % iterations for the market simulation
 iterations = 15;
@@ -80,13 +80,14 @@ rebound_effect = (percent_supply_shocks +  percent_quantity_rebound) ...
                  ./ percent_supply_shocks;
              
 % Decrease in CO2
-CO2_reduction_grams = -quantity_rebound(1,:)*95*131.76;
-CO2_reduction_megatonnes = CO2_reduction_grams*10^(-6);
+CO2_reduction = 95*131.76;
+CO2_reduction_grams = -quantity_rebound(1,:) * CO2_reduction;
+CO2_reduction_tonnes = CO2_reduction_grams*10^(-6);
         
 % Formatted Data for xlsx
 formatted_data = [percent_supply_shocks', percent_price_change',       ...
                   percent_quantity_change', percent_quantity_rebound', ...
-                  rebound_effect', CO2_reduction_megatonnes'];
+                  rebound_effect', CO2_reduction_tonnes'];
 
 
 %% Plot Results
@@ -155,7 +156,7 @@ formatted_data = [percent_supply_shocks', percent_price_change',       ...
 % 
 % lgd = legend('show');
 % xlabel('Supply Shock (%)');
-% ylabel('CO2 (megatonnes)');
+% ylabel('CO2 (tonnes)');
 % title('CO2 Reduction');
 % grid on;
 

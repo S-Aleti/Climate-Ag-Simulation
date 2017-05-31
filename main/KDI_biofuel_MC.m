@@ -17,7 +17,7 @@ commodities = {'fuel', 'electricity', 'natural gas'};
 shock_commodity = 'fuel';
 
 % SPECIFY HERE WHETHER TO USE KDI SHOCKS OR PREDEFINED PERCENT SHOCKS
-use_KDI_shocks = true;
+use_KDI_shocks = false;
 
 % percent shocks can be specified manually here
 percent_shocks = [0.05:0.05:1.00] + 1;
@@ -292,7 +292,14 @@ for i = 1:length(labels)
     label = ['results/csv/biofuel/', label, '.csv'];
     
     % write to file
-    csvwriteh(label, temp_data, header);
-    
+    try
+        csvwriteh(label, temp_data, header);
+        if i == length(labels)
+            disp('Data exported to results/csv/biofuel');
+        end
+    catch
+        disp('Error exporting data, make sure you are in the root folder')
+        break;
+    end
 end
 

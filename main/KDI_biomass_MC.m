@@ -290,15 +290,19 @@ for i = 1:length(labels)
     if use_KDI_shocks
         label(find(~isletter(label))) = '_'; 
     end
-    label = ['results/csv/biomass/', label, '.csv'];
-        
+    label = ['results/csv/biofuel/', label, '.csv'];
     
     % write to file
-    csvwriteh(label, temp_data, header);
-    
+    try
+        csvwriteh(label, temp_data, header);
+        if i == length(labels)
+            disp('Data exported to results/csv/biomass');
+        end
+    catch
+        disp('Error exporting data, make sure you are in the root folder')
+        break;
+    end
 end
-
-disp('Results saved to CSV')
 
 
 

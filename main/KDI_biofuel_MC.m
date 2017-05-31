@@ -16,14 +16,14 @@ commodities = {'fuel', 'electricity', 'natural gas'};
 % commodity to shock
 shock_commodity = 'fuel';
 
+% SPECIFY HERE WHETHER TO USE KDI SHOCKS OR PREDEFINED PERCENT SHOCKS
+use_KDI_shocks = true;
+
 % percent shocks can be specified manually here
 percent_shocks = [0.05:0.05:1.00] + 1;
 
 % iterations for the market simulation
 iterations = 15;
-
-% SPECIFY HERE WHETHER TO USE KDI SHOCKS OR PREDEFINED PERCENT SHOCKS
-use_KDI_shocks = true;
 
 
 %% Import Data
@@ -65,7 +65,7 @@ alpha_shocks(row,:) = shock_data;
 %% Monte Carlo Simulation
 
 % params
-sigma = 0.05; % stdev of normal dist added to randomize elasticities
+sigma = 0.00; % stdev of normal dist added to randomize elasticities
 trials = 1000;
 plot_results = false; 
 
@@ -94,7 +94,7 @@ for trial = 1:trials
     % elasticities are randomized 
     elas_D2 = randomizeElasticities(elas_D, 'normal', sigma);
     
-    % gasoline own price demand elas is taken from a random uniform dist
+    % gasoline own price demand elas is taken from a triangle dist
     ind = find(~cellfun(@isempty,strfind(commodities, 'gasoline')));
     % based on Dahl and Sterner
     elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
@@ -141,7 +141,9 @@ for trial = 1:trials
                             percent_supply_shocks;
     
     % Decrease in CO2
-    CO2_reduction_grams(:,:,trial) = -quantity_rebound(1,:,trial)*95*131.76;
+    CO2_reduction = 95*131.76;
+    CO2_reduction_grams(:,:,trial) = -quantity_rebound(1,:,trial) * ...
+                                        CO2_reduction;
     CO2_reduction_megatonnes(:,:,trial) = CO2_reduction_grams(:,:,trial)*10^(-6);
 
     % Formatted Data for xlsx
@@ -154,9 +156,14 @@ for trial = 1:trials
                       permute(rebound_effect, p_idx),                  ...
                       permute(CO2_reduction_megatonnes, p_idx)];
                   
+    % Summary stats
     data_mean     = mean(formatted_data, 3);
+    data_min      = quantile(formatted_data, 0.00, 3);
     data_5th_pct  = quantile(formatted_data, 0.05, 3);
+    data_median   = quantile(formatted_data, 0.50, 3);
     data_95th_pct = quantile(formatted_data, 0.95, 3);  
+    data_max      = quantile(formatted_data, 1.00, 3);
+    
                     
 end
 

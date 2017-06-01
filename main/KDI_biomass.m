@@ -161,3 +161,22 @@ formatted_data = [percent_supply_shocks', percent_price_change',       ...
 % grid on;
 
 
+%% Update results
+
+filename = 'results/xlsx/KDI_results.xlsx';
+
+try
+
+    sheet = 'electricity_shocks';
+
+    xlswrite(filename, formatted_data,  sheet,  'G2');
+
+    disp(['Results saved to ' , filename]);
+    
+catch
+    
+    disp(['Error recording results,' , ...
+                    'make sure you are in the root folder'])
+    return;
+    
+end

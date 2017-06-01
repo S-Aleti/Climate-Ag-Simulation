@@ -95,10 +95,10 @@ for trial = 1:trials
     elas_D2 = randomizeElasticities(elas_D, 'normal', sigma);
     
     % gasoline own price demand elas is taken from a random uniform dist
-    ind = find(~cellfun(@isempty,strfind(commodities, 'gasoline')));
+    ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
     % based on Dahl and Sterner
     elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
-                        'uniform', -1.05, -0.16 ); 
+                        'triangle', -1.05, -0.16 ); 
     
     % electricity own price demand elas is taken from a normal dist
     ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
@@ -251,7 +251,48 @@ if ~use_KDI_shocks
 
 end
 
-            
+          
+%% Update results
+
+filename = 'results/xlsx/KDI_results.xlsx';
+
+try
+    
+    if use_KDI_shocks
+
+        sheet = 'electricity_shocks_MC_trials';
+        
+        xlswrite(filename, data_mean,      sheet,  'G3');
+        xlswrite(filename, data_min,       sheet,  'G42');
+        xlswrite(filename, data_5th_pct,   sheet,  'G81');
+        xlswrite(filename, data_median,    sheet,  'G120');
+        xlswrite(filename, data_95th_pct,  sheet,  'G159');
+        xlswrite(filename, data_max,       sheet,  'G198');
+
+    elseif sum(percent_shocks - [1.05:0.05:2.00]) < 1;
+
+        sheet = 'electricity_percent_shocks';
+
+        xlswrite(filename, data_mean,      sheet,  'A4');
+        xlswrite(filename, data_min,       sheet,  'A29');
+        xlswrite(filename, data_5th_pct,   sheet,  'A54');
+        xlswrite(filename, data_median,    sheet,  'A79');
+        xlswrite(filename, data_95th_pct,  sheet,  'A104');
+        xlswrite(filename, data_max,       sheet,  'A129');
+
+    end
+    
+    disp(['Results saved to ' , filename]);
+    
+catch
+    
+    disp(['Error recording results,' , ...
+                    'make sure you are in the root folder'])
+    return;
+    
+end
+    
+
 %% Export results
 
 %%% Create data file labels

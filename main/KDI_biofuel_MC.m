@@ -66,7 +66,7 @@ alpha_shocks(row,:) = shock_data;
 
 % params
 sigma = 0.00; % stdev of normal dist added to randomize elasticities
-trials = 1000;
+trials = 100;
 plot_results = false; 
 
 % preallocate arrays
@@ -95,7 +95,7 @@ for trial = 1:trials
     elas_D2 = randomizeElasticities(elas_D, 'normal', sigma);
     
     % gasoline own price demand elas is taken from a triangle dist
-    ind = find(~cellfun(@isempty,strfind(commodities, 'gasoline')));
+    ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
     % based on Dahl and Sterner
     elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
                         'triangle', -1.05, -0.16 ); 
@@ -248,6 +248,47 @@ if ~use_KDI_shocks
     plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                     bins, [-inf, inf],  stdev_threshold);
 
+end
+
+
+%% Update results
+
+filename = 'results/xlsx/KDI_results.xlsx';
+
+try
+    
+    if use_KDI_shocks
+
+        sheet = 'fuel_shocks_MC_trials';
+        
+        xlswrite(filename, data_mean,      sheet,  'G3');
+        xlswrite(filename, data_min,       sheet,  'G23');
+        xlswrite(filename, data_5th_pct,   sheet,  'G43');
+        xlswrite(filename, data_median,    sheet,  'G63');
+        xlswrite(filename, data_95th_pct,  sheet,  'G83');
+        xlswrite(filename, data_max,       sheet,  'G103');
+
+    elseif sum(percent_shocks - [1.05:0.05:2.00]) < 1;
+
+        sheet = 'fuel_percent_shocks';
+
+        xlswrite(filename, data_mean,      sheet,  'A4');
+        xlswrite(filename, data_min,       sheet,  'A29');
+        xlswrite(filename, data_5th_pct,   sheet,  'A54');
+        xlswrite(filename, data_median,    sheet,  'A79');
+        xlswrite(filename, data_95th_pct,  sheet,  'A104');
+        xlswrite(filename, data_max,       sheet,  'A129');
+
+    end
+    
+    disp(['Results saved to ' , filename]);
+    
+catch
+    
+    disp(['Error recording results,' , ...
+                    'make sure you are in the root folder'])
+    return;
+    
 end
 
 

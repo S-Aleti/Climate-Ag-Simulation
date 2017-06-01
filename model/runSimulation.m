@@ -1,7 +1,7 @@
 function [ price_eqls, quantity_eqls ] = runSimulation( price, quantity,...
                     elas_D, elas_S, alpha_shocks, iterations, plot_results)
                 
-% SIMULATESHOCK determines the change in price and quantity over time given
+% RUNSIMULATION determines the change in price and quantity over time given
 % a shock to a system
 % ========================================================================
 % INPUT ARGUMENTS:
@@ -17,10 +17,6 @@ function [ price_eqls, quantity_eqls ] = runSimulation( price, quantity,...
 %                                  and demand effects
 % ========================================================================
 % OUTPUT:
-%   price_t              (matrix) price vectors over time
-%   quantity_t           (matrix) quantity vectors over time
-%   price_shock          (vector) prices after shock (partial equilibrium)
-%   quantity_shock       (vector) quantities after shock
 %   price_eqls           (matrix) general equillibrium prices for each 
 %                                 supply shock
 %   quantity_eql         (matrix) general equillibrium quantities for each

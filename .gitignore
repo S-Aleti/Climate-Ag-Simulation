@@ -13,3 +13,6 @@
 *.spl
 *.synctex.gz
 
+# CSV files
+*.csv
+

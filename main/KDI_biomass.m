@@ -5,6 +5,7 @@
 % KDI_results.xlsx in the results folder
 % =======================================================================
 
+clear
 close all
 
 %% Parameters
@@ -83,7 +84,12 @@ rebound_effect = (percent_supply_shocks +  percent_quantity_rebound) ...
 CO2_reduction = 976; %g/kWh saved from switching to biomass (Spath and Mann)
 CO2_reduction_grams = -quantity_rebound(1,:) * CO2_reduction;
 CO2_reduction_tonnes = CO2_reduction_grams*10^(-6);
-        
+       
+%welfare calculations
+CS = (-price_change(row,:) .* (quantity_eqls(row,:) + repmat(quantity, 1, n))./2);
+PS_G = ( price_change(row,:) .* (quantity_eqls(row,:) - quantity_after_shock(row,:) + repmat(quantity, 1, n))./2);
+PS_B = ( price_eqls(row,:) .* (percent_supply_shocks .* repmat(quantity, 1, n)));
+
 % Formatted Data for xlsx
 formatted_data = [percent_supply_shocks', percent_price_change',       ...
                   percent_quantity_change', percent_quantity_rebound', ...
@@ -175,7 +181,7 @@ try
     
 catch
     
-    disp(['Error recording results,' , ...
+    disp(['Error recording results, ' , ...
                     'make sure you are in the root folder'])
     return;
     

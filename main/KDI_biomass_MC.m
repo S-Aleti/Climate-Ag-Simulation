@@ -20,7 +20,10 @@ shock_commodity = 'electricity';
 use_KDI_shocks = false;
 
 % percent shocks can be specified manually here
-percent_shocks = [0.05:0.05:1.00] + 1;
+percent_shocks = [0.10:0.05:0.25] + 1;
+
+% Monte Carlo trials
+trials = 100;
 
 % iterations for the market simulation
 iterations = 15;
@@ -66,8 +69,6 @@ alpha_shocks(row,:) = shock_data;
 
 % params
 sigma = 0.00; % stdev of normal dist added to randomize elasticities
-trials = 1000;
-plot_results = false; 
 
 % preallocate arrays
 n = size(alpha_shocks,2);
@@ -93,6 +94,7 @@ for trial = 1:trials
     
     % elasticities are randomized 
     elas_D2 = randomizeElasticities(elas_D, 'normal', sigma);
+    elas_S2 = randomizeElasticities(elas_S, 'normal', sigma);
     
     % gasoline own price demand elas is taken from a random uniform dist
     ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
@@ -103,13 +105,15 @@ for trial = 1:trials
     % electricity own price demand elas is taken from a normal dist
     ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
     % based on Bernstein and Griffin
-    elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
-                        'normal', 0.0753); 
+    %elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
+    %                    'normal', 0.0753); 
+    elas_S2(ind,ind) = randomizeElasticities( elas_S(ind,ind), ...
+                        'normal', 0.1); 
 
     %% Simluate shocks
     
     [price_eqls, quantity_eqls ] = runSimulation( price, quantity, ...
-                elas_D2, elas_S, alpha_shocks, iterations, plot_results);
+                elas_D2, elas_S2, alpha_shocks, iterations, false);
              
     % update wait bar
     if (mod(trial,200)==0) waitbar(trial/data_size,h); end
@@ -135,7 +139,7 @@ for trial = 1:trials
     quantity_rebound(:,:,trial) = quantity_eqls(row,:) - ...
                                     quantity_after_shock(row,:,trial);
     percent_quantity_rebound(:,:,trial) = quantity_rebound(:,:,trial) ./...
-                                         quantity_after_shock(row,:,trial);
+                                         repmat(quantity(row,:), 1, n);
     rebound_effect(:,:,trial) = ((percent_supply_shocks) +             ...
                             percent_quantity_rebound(:,:,trial)) ./    ...
                             percent_supply_shocks;
@@ -146,6 +150,15 @@ for trial = 1:trials
                                         CO2_reduction;
     CO2_reduction_tonnes(:,:,trial) = CO2_reduction_grams(:,:,trial)*10^(-6);
 
+    % Welfare calculations
+    Q0 = repmat(quantity, 1, n);
+    CS_Q_SUM(:,:,trial) = (quantity_eqls + Q0);
+    CS(:,:,trial) = (-price_change(row,:,trial) .* CS_Q_SUM(row,:,trial)./2);
+    PS_G(:,:,trial) = ( price_change(row,:,trial) .* ...
+                        ((quantity_eqls(row,:) - quantity_after_shock(row,:,trials) + Q0(row,:))./2));
+    PS_B(:,:,trial) = ( price_eqls(row,:) .* (percent_supply_shocks .* Q0(row,:)));
+    Welfare(:,:,trial) = CS(:,:,trial) + PS_G(:,:,trial) + PS_B(:,:,trial);
+    
     % Formatted Data for xlsx
     p_idx = [2, 1, 3]; % permutes a 3D matrix
     formatted_data = [permute(repmat( ...
@@ -195,7 +208,7 @@ if ~use_KDI_shocks
     plot_title = 'Change in price of electricity after supply shocks';
     x_label    = 'Price Change (%)';
     y_label    = 'Probability';
-    bins       = 12;
+    bins       = 5;
 
     plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                     bins, percent_change_outlier_threshold,  stdev_threshold);
@@ -207,7 +220,7 @@ if ~use_KDI_shocks
     plot_title = 'Change in quantity of electricity after supply shocks';
     x_label    = 'Quantity Change (%)';
     y_label    = 'Probability';
-    bins       = 12;
+    bins       = 5;
 
     plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                     bins, percent_change_outlier_threshold,  stdev_threshold);
@@ -220,7 +233,7 @@ if ~use_KDI_shocks
                     ' after supply shocks'];
     x_label    = 'Quantity Change (%)';
     y_label    = 'Probability';
-    bins       = 14;
+    bins       = 7;
 
     plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                     bins, percent_change_outlier_threshold,  stdev_threshold);
@@ -232,7 +245,7 @@ if ~use_KDI_shocks
     plot_title = 'Rebound effect on electricity after supply shocks';
     x_label    = 'Rebound Effect';
     y_label    = 'Probability';
-    bins       = 40;
+    bins       = 20;
 
     plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                     bins, [-inf, inf],  stdev_threshold);
@@ -244,17 +257,28 @@ if ~use_KDI_shocks
     plot_title = 'CO2 reduction after supply shocks';
     x_label    = 'CO2 Reduction (tonnes)';
     y_label    = 'Probability';
-    bins       = 12;
+    bins       = 6;
 
     plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
                     bins, [-inf, inf],  stdev_threshold);
 
+                
+    %%% Welfare
+
+    data       =  Welfare(1,:,:);
+    plot_title = 'Welfare change';
+    x_label    = 'Change in welfare (Won)';
+    y_label    = 'Probability';
+    bins       = 5;
+
+    plotShockHistogram(data, plot_title, x_label, y_label, legend_labels, ...
+                    bins, [-inf, inf],  stdev_threshold);
 end
 
           
 %% Update results
 
-filename = 'results/xlsx/KDI_results.xlsx';
+filename = 'results/xlsx/KDI_results_randomsupply.xlsx';
 
 try
     
@@ -286,7 +310,7 @@ try
     
 catch
     
-    disp(['Error recording results,' , ...
+    disp(['Error recording results, ' , ...
                     'make sure you are in the root folder'])
     return;
     

@@ -25,6 +25,9 @@ percent_shocks = [0.05:0.05:1.00] + 1;
 % iterations for the market simulation
 iterations = 15;
 
+% spreadsheet to update
+filename = 'results/xlsx/KDI_results_randomsupply.xlsx';
+
 
 %% Import Data
 
@@ -64,10 +67,8 @@ alpha_shocks(row,:) = shock_data;
 
 %% Simluate shocks
 
-plot_results = false;
-
 [price_eqls, quantity_eqls ] = runSimulation( price, quantity, elas_D, ...
-                        elas_S, alpha_shocks, iterations, plot_results);
+                        elas_S, alpha_shocks, iterations, false);
 
 
 %% Results
@@ -90,7 +91,8 @@ quantity_after_shock = repmat(quantity,1,n) + alpha_shocks;
 
 % Rebound effect
 quantity_rebound = quantity_eqls(row,:) - quantity_after_shock(row,:);
-percent_quantity_rebound = quantity_rebound ./ quantity(row,:);
+percent_quantity_rebound = quantity_rebound ./ ...
+                                repmat(quantity(row,:), 1, n);
 rebound_effect = (percent_supply_shocks +  percent_quantity_rebound) ...
                  ./ percent_supply_shocks;
              
@@ -210,8 +212,6 @@ end
 
 
 %% Update results
-
-filename = 'results/xlsx/KDI_results.xlsx';
 
 try
 

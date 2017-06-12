@@ -28,6 +28,12 @@ trials = 100;
 % iterations for the market simulation
 iterations = 15;
 
+% spreadsheet to update
+filename = 'results/xlsx/KDI_results_randomdemand.xlsx';
+
+% elasticity type to randomize: either supply or demand
+random_elas = 'demand'; 
+
 
 %% Import Data
 
@@ -96,19 +102,34 @@ for trial = 1:trials
     elas_D2 = randomizeElasticities(elas_D, 'normal', sigma);
     elas_S2 = randomizeElasticities(elas_S, 'normal', sigma);
     
-    % gasoline own price demand elas is taken from a random uniform dist
-    ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
-    % based on Dahl and Sterner
-    %elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
-    %                    'triangle', -1.05, -0.16 ); 
-    elas_S2(ind,ind) = randomizeElasticities( elas_S(ind,ind), ...
-                        'normal', 0.1);
-    
-    % electricity own price demand elas is taken from a normal dist
-    ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
-    % based on Bernstein and Griffin
-    elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
+    if strcmp(random_elas, 'demand')
+        
+        % gasoline 
+        ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
+        elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
+                        'triangle', -1.05, -0.16 ); 
+        % electricity
+        ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
+        elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
                         'normal', 0.0753); 
+        
+    elseif strcmp(random_elas, 'supply')
+        
+        % gasoline 
+        ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
+        elas_S2(ind,ind) = randomizeElasticities( elas_S(ind,ind), ...
+                        'normal', 0.1);
+        % electricity
+        ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
+        elas_S2(ind,ind) = randomizeElasticities( elas_S(ind,ind), ...
+                        'normal', 0.1); 
+                    
+    else
+        
+        error(['Incorrect parameter for elasticity randomization:' , ...
+                 'set random_elas to either "supply" or "demand"'])
+        
+    end
 
     %% Simluate shocks
     
@@ -277,8 +298,6 @@ end
 
 
 %% Update results
-
-filename = 'results/xlsx/KDI_results_randomsupply.xlsx';
 
 try
     

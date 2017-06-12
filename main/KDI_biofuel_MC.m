@@ -13,6 +13,9 @@ close all
 % commodities to analyze
 commodities = {'fuel', 'electricity', 'natural gas'};
 
+% non-organic commodity names
+commodities_no = {'gasoline', 'non-biomass electricity', ' '};
+
 % commodity to shock
 shock_commodity = 'fuel';
 
@@ -20,19 +23,19 @@ shock_commodity = 'fuel';
 use_KDI_shocks = false;
 
 % percent shocks can be specified manually here
-percent_shocks = [0.05:0.05:0.25] + 1;
+percent_shocks = [0.05:0.05:1] + 1;
 
 % Monte Carlo trials
-trials = 100;
+trials = 1000;
 
 % iterations for the market simulation
 iterations = 15;
 
 % spreadsheet to update
-filename = 'results/xlsx/KDI_results_randomdemand.xlsx';
+filename = 'results/xlsx/KDI_results_randomsupply.xlsx';
 
 % elasticity type to randomize: either supply or demand
-random_elas = 'demand'; 
+random_elas = 'supply'; 
 
 
 %% Import Data
@@ -54,7 +57,7 @@ disp('Calculating shock effects...');
                                          elas_D, elas_S, price, quantity);
 
 % find row corresponding to the given commodity to shock
-row  = find(~cellfun(@isempty,strfind(commodities, shock_commodity)));
+row  = find(contains(commodities, shock_commodity));
 
                                      
 if use_KDI_shocks
@@ -62,7 +65,7 @@ if use_KDI_shocks
                                     shock_commodity, 2, 3);
     shock_data = [raw_shock_data{:,2}];
 else
-    raw_shock_data =   quantity * percent_shocks - repmat(beta_s * ...
+    raw_shock_data =  quantity * percent_shocks - repmat(beta_s * ...
                       price + alpha_s, 1, size(percent_shocks,2));    
     shock_data = raw_shock_data(row,:);
 end
@@ -105,22 +108,22 @@ for trial = 1:trials
     if strcmp(random_elas, 'demand')
         
         % gasoline 
-        ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
+        ind = find(contains(commodities, 'fuel'));
         elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
                         'triangle', -1.05, -0.16 ); 
         % electricity
-        ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
+        ind = find(contains(commodities, 'electricity'));
         elas_D2(ind,ind) = randomizeElasticities( elas_D(ind,ind), ...
                         'normal', 0.0753); 
         
     elseif strcmp(random_elas, 'supply')
         
         % gasoline 
-        ind = find(~cellfun(@isempty,strfind(commodities, 'fuel')));
+        ind = find(contains(commodities, 'fuel'));
         elas_S2(ind,ind) = randomizeElasticities( elas_S(ind,ind), ...
                         'normal', 0.1);
         % electricity
-        ind = find(~cellfun(@isempty,strfind(commodities, 'electricity')));
+        ind = find(contains(commodities, 'electricity'));
         elas_S2(ind,ind) = randomizeElasticities( elas_S(ind,ind), ...
                         'normal', 0.1); 
                     
@@ -247,10 +250,10 @@ if ~use_KDI_shocks
                     bins, percent_change_outlier_threshold,  stdev_threshold);
 
 
-    %%% Quantity changes in non-biomass derived electricity
+    %%% Quantity change of gasoline
 
     data       = percent_quantity_rebound(1,:,:);
-    plot_title = ['Change in quantity of gasoline', ...
+    plot_title = ['Change in quantity of ', commodities_no{row},  ...
                     ' after supply shocks'];
     x_label    = 'Quantity Change (%)';
     y_label    = 'Probability';
@@ -301,6 +304,9 @@ end
 
 try
     
+    % percent shocks recorded in xlsx
+    percent_shock_standard = [1.05:0.05:2.00];
+    
     if use_KDI_shocks
 
         sheet = 'fuel_shocks_MC_trials';
@@ -311,8 +317,10 @@ try
         xlswrite(filename, data_median,    sheet,  'G63');
         xlswrite(filename, data_95th_pct,  sheet,  'G83');
         xlswrite(filename, data_max,       sheet,  'G103');
+        
+        disp(['Results saved to ' , filename]);
 
-    elseif sum(percent_shocks - [1.05:0.05:2.00]) < 1;
+    elseif isequal(round(percent_shock_standard,3),round(percent_shocks,3))
 
         sheet = 'fuel_percent_shocks';
 
@@ -322,10 +330,10 @@ try
         xlswrite(filename, data_median,    sheet,  'A79');
         xlswrite(filename, data_95th_pct,  sheet,  'A104');
         xlswrite(filename, data_max,       sheet,  'A129');
+        
+        disp(['Results saved to ' , filename]);
 
-    end
-    
-    disp(['Results saved to ' , filename]);
+    end 
     
 catch
     
@@ -359,8 +367,8 @@ header = {['% Change in the Price of ', commodities{1}],               ...
           ['% Change in the Quantity of ', commodities{1}],            ...
           ['% Change in the Quantity of ', commodities{2}],            ...
           ['% Change in the Quantity of ', commodities{3}],            ...   
-          ['% Change in the Quantity of Gasoline'],                    ...
-          ['Rebound effect on gasoline'],                              ...
+          ['% Change in the Quantity of ', commodities_no{row}],       ...
+          ['Rebound effect on ', shock_commodity],                     ...
           ['CO2 Reduction (tonnes)']};
 
 for i = 1:length(labels)

@@ -1,5 +1,26 @@
 function [ data ] = analyzeShocks(epq_data, cf_data)
 
+% ANALYZESHOCKS creates a linear supply and demand model based on the epq
+% data and then simulates the effects in the cf_data using this model
+% ========================================================================
+% INPUT ARGUMENTS:
+%   epq_data             (cell array)  merge of elas_data and pq_data
+%   pq_data              (cell array)  contains price & quantity data
+% ========================================================================
+% OUTPUT:
+%   data                 (cell array)  contains the {country_ID,
+%                                      country_name, commodity_name, 
+%                                      year_1_shock, ..., year_n_shock}
+%                                      where each year's shock data
+%                                      is the [price_change, quant_change,
+%                                      transfer_to_producer, 
+%                                      consumer_deadweight,
+%                                      producer_deadweight, 
+%                                      producer_surplus_change,   
+%                                      consumer_surplus_change]
+% ========================================================================
+
+
 %% Calculate shocks 
 
 % empty cell array to store results

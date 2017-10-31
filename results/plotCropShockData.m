@@ -39,64 +39,56 @@ for i = 1:length(countries)
     
 end
 
+
 %% Create figure
 
 fig = figure;
 set(fig, 'Visible', 'off');
 
+
 %% Add Data
 
 % Create axes
-axes1 = axes('Position',[0.13 0.11 0.775 0.815]);
+axes1 = axes('Position',[0.13 0.11 0.775 0.815], 'FontSize', 6);
 hold(axes1,'on');
 
 % Create multiple lines using matrix input to plot
 plot1 = plot([0:(size(filtered_data,2)-1)], filtered_data);
 
-%% Label Plot
+
+%% Plot Settings
 
 % Label each line in the legend
 for i = 1:size(countries,2)
     set(plot1(i),'DisplayName',countries{i});
 end
 
-legend('show', 'Location', 'southwest');
+% Change tick size
+%fig.Children(2).FontSize = 9;
 
-% Create title
-title(title_);
+lgd = legend('show', 'Location', 'southwest');
+lgd.FontSize = 7;
 
 % Create xlabel
-xlabel('Year (post shock)', 'FontSize', 11, 'FontWeight', 'bold');
+xlb = xlabel('Years since shock', 'FontSize', 11);
+set(xlb, 'Units', 'Normalized', 'Position', [0.5, -0.065, 0]);
 
 % Create ylabel
-ylabel(y_axis, 'FontSize', 11, 'FontWeight', 'bold');
+ylb = ylabel(y_axis, 'FontSize', 11);
+set(ylb, 'Units', 'Normalized', 'Position', [-0.07, 0.5, 0]);
 
 % Format y_ticks if y-axis is a % output
 if any([1,2,6,7] == data_type) 
     %fig.Children(2).YTick = percentYticks(fig); 
 end
 
+% Create title
+ttl = title(title_, 'FontSize', 12, 'FontWeight', 'bold');
+set(ttl, 'Units', 'Normalized', 'Position', [0.5, 1.02, 0])
+
 % Misc.
 box(axes1,'on');
 grid('on');
 
-end
-
-function [yticks] = percentYticks(fig) 
-
-% Converts decimal y ticks on a graph to percentages
-% ========================================================================
-
-% Get current y ticks
-curr_yticks = fig.Children(2).YTick;
-
-% Convert y-axis values to percentage values by multiplication
-pct_vals = [cellstr(num2str(curr_yticks' * 100))]; 
- 
-% Create a vector of '%' signs
-pct = char(ones(size(pct_vals, 1), 1) * '%'); 
-
-% Append the '%' signs after the percentage values
-yticks = [char(pct_vals), pct];
 
 end

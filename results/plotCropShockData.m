@@ -60,17 +60,43 @@ for i = 1:size(countries,2)
     set(plot1(i),'DisplayName',countries{i});
 end
 
-% Create xlabel
-xlabel('Year (post shock)');
+legend('show', 'Location', 'southwest');
 
 % Create title
 title(title_);
 
-% Create ylabel
-ylabel(y_axis);
+% Create xlabel
+xlabel('Year (post shock)', 'FontSize', 11, 'FontWeight', 'bold');
 
-legend('show');
+% Create ylabel
+ylabel(y_axis, 'FontSize', 11, 'FontWeight', 'bold');
+
+% Format y_ticks if y-axis is a % output
+if any([1,2,6,7] == data_type) 
+    %fig.Children(2).YTick = percentYticks(fig); 
+end
+
+% Misc.
 box(axes1,'on');
+grid('on');
 
 end
 
+function [yticks] = percentYticks(fig) 
+
+% Converts decimal y ticks on a graph to percentages
+% ========================================================================
+
+% Get current y ticks
+curr_yticks = fig.Children(2).YTick;
+
+% Convert y-axis values to percentage values by multiplication
+pct_vals = [cellstr(num2str(curr_yticks' * 100))]; 
+ 
+% Create a vector of '%' signs
+pct = char(ones(size(pct_vals, 1), 1) * '%'); 
+
+% Append the '%' signs after the percentage values
+yticks = [char(pct_vals), pct];
+
+end

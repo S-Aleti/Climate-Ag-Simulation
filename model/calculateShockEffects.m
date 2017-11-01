@@ -27,52 +27,52 @@ surplus_C1 = (1/2) * (quantity) * ( (-alpha_d/beta_d) - price);
 surplus_S1 = (1/2) * (max(0, alpha_s) + quantity)...
              *(price - max(0, -alpha_s / beta_s));
 
+         
 %% Introduce Supply Shock
 % New supply schedule: Q = (alpha_s + supply_shock) + beta_s*P
 
 % new intercept 
 alpha_s2 = alpha_s + alpha_shock;
 
-new_price =  (alpha_s2 - alpha_d) / (beta_d - beta_s);
+new_price    =  (alpha_s2 - alpha_d) / (beta_d - beta_s);
 new_quantity = alpha_d + beta_d * new_price;
 
 % if supply shock prevents any production
 if new_price < 0
     
-    new_price    = 0;
-    new_quantity = 0;
-    surplus_L1   = 0;
-    surplus_L2   = 0;
-    surplus_L3   = 0;
-    surplus_C2   = 0;
-    surplus_S2   = 0;
+    output = zeros(1,9);
+    return 
     
-else
-    %% Calculate New Surpluses
-
-    % New Consumer surplus
-    surplus_C2 = (1/2)*(new_quantity)*( (-alpha_d / beta_d) - new_price );
-
-    % New Producer surplus
-    surplus_S2 = (1/2)*(max(0, alpha_s2) + new_quantity)...
-                 * (new_price - max(0, -(alpha_s2) / beta_s));
-
-    %% Calculate Change in Surpluses
-
-    % quantity if price doesn't adjust
-    pe_quantity = alpha_s2 + beta_s*price;
-
-    % lost consumer surplus captured by producer
-    surplus_L1 = (new_price - price) * (pe_quantity + new_quantity) / 2;
-
-    % lost consumer surplus not captured by producer
-    surplus_L2 = (quantity - pe_quantity) * (new_price - price) / 2;
-
-    % lost producer surplus
-    surplus_L3 = (quantity * (price - (alpha_s/( -beta_s ))) / 2) ...
-                  - (pe_quantity * (price - (alpha_s2/( -beta_s ))) / 2);
-              
 end
+
+
+%% Calculate New Surpluses
+
+% New Consumer surplus
+surplus_C2 = (1/2)*(new_quantity)*( (-alpha_d / beta_d) - new_price );
+
+% New Producer surplus
+surplus_S2 = (1/2)*(max(0, alpha_s2) + new_quantity)...
+             * (new_price - max(0, -(alpha_s2) / beta_s));
+
+         
+%% Calculate Change in Surpluses
+
+% quantity if price doesn't adjust
+pe_quantity = alpha_s2 + beta_s*price;
+
+% lost consumer surplus captured by producer
+surplus_L1 = (new_price - price) * (pe_quantity + new_quantity) / 2;
+
+% lost consumer surplus not captured by producer (deadweight loss)
+surplus_L2 = (quantity - pe_quantity) * (new_price - price) / 2;
+
+% lost producer surplus (excluding deadweight and gain from L1)
+surplus_L3 = surplus_S1 - ( (1/2)*(price - max((-alpha_s2/beta_s), ...
+                            0)) * ((alpha_s2 + beta_s*price) +    ...
+                            (max(0, alpha_s2))));
+              
+
 
 %% Output
 

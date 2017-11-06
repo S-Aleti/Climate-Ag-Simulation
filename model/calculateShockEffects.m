@@ -41,6 +41,8 @@ new_quantity = alpha_d + beta_d * new_price;
 if new_price < 0
     
     output = zeros(1,9);
+	% deadweight loss is all of present surplus
+	output(4) = surplus_C1 + surplus_S1;
     return 
     
 end

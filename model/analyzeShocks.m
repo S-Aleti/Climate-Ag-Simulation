@@ -78,7 +78,7 @@ for i = 1:size(cf_data,1)
                       
         % percent changes in price, quantity
         price_change = (output(1) - price) / (price);
-        quantity_change = percent_shock;
+        quantity_change = (output(2) - control_quantity)/control_quantity;
         
         % surplus changes
         transfer_to_producer        = output(3);

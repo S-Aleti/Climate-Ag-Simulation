@@ -86,8 +86,8 @@ for i = 1:size(cf_data,1)
         producer_deadweight         = output(5);
         
         % percent change in surpluses
-        producer_surplus_change     = (output(8)-output(6))/ output(6); 
-        consumer_surplus_change     = (output(9)-output(7))/ output(7); 
+        consumer_surplus_change     = (output(8)-output(6))/ output(6); 
+        producer_surplus_change     = (output(9)-output(7))/ output(7); 
 
         % fill in entry
         entry(j-1) = {[price_change, quantity_change,                   ...

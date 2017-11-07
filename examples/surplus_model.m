@@ -10,7 +10,7 @@ elas_S = 1.1;
 
 [ alpha_d, beta_d, alpha_s, beta_s ] = calculateCoefficients( ...
                                           elas_D, elas_S, price, quantity);
-alpha_shock = -70;
+alpha_shock = -7;
 alpha_s2 = alpha_s + alpha_shock;
 
 

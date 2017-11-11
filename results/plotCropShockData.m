@@ -110,9 +110,9 @@ switch(data_type)
         title_text = ['$  of ' crop ' Surplus Transferred from ' ...
             'Consumers to Producers'];
     case 4
-        title_text = ['$  of ' crop ' Deadweight Loss borne by Consumers'];
+        title_text = ['$  of ' crop ' Welfare Loss borne by Consumers'];
     case 5
-        title_text = ['$  of ' crop ' Deadweight Loss borne by Producers'];
+        title_text = ['$  of ' crop ' Welfare Loss borne by Producers'];
     case 6
         title_text = ['% Change in ' crop ' Consumer Surplus over Time'];
     case 7

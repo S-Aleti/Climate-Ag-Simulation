@@ -44,7 +44,7 @@ if new_price < 0
 	% include original surpluses
 	output(6) = surplus_C1;
 	output(7) = surplus_S1;
-	% deadweight loss is all of present surplus
+	% welfare loss is all of present surplus
 	output(4) = surplus_C1 + surplus_S1;
     return 
     
@@ -69,10 +69,10 @@ pe_quantity = alpha_s2 + beta_s*price;
 % lost consumer surplus captured by producer
 surplus_L1 = (new_price - price) * (pe_quantity + new_quantity) / 2;
 
-% lost consumer surplus not captured by producer (consumer deadweight loss)
+% lost consumer surplus not captured by producer 
 surplus_L2 = (quantity - pe_quantity) * (new_price - price) / 2;
 
-% lost producer surplus (producer deadweight loss)
+% lost producer surplus 
 surplus_L3 = surplus_S1 - ( (1/2)*(price - max((-alpha_s2/beta_s), ...
                             0)) * ((alpha_s2 + beta_s*price) +    ...
                             (max(0, alpha_s2))));

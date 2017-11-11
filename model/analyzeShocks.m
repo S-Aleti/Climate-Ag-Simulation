@@ -14,8 +14,8 @@ function [ data ] = analyzeShocks(epq_data, cf_data)
 %                                      where each year's shock data
 %                                      is the [price_change, quant_change,
 %                                      transfer_to_producer, 
-%                                      consumer_deadweight,
-%                                      producer_deadweight, 
+%                                      consumer_welfare_loss,
+%                                      producer_welfare_loss, 
 %                                      producer_surplus_change,   
 %                                      consumer_surplus_change]
 % ========================================================================
@@ -82,8 +82,8 @@ for i = 1:size(cf_data,1)
         
         % surplus changes
         transfer_to_producer        = output(3);
-        consumer_deadweight         = output(4);
-        producer_deadweight         = output(5);
+        consumer_welfare_loss       = output(4);
+        producer_welfare_loss       = output(5);
         
         % percent change in surpluses
         consumer_surplus_change     = (output(8)-output(6))/ output(6); 
@@ -91,8 +91,8 @@ for i = 1:size(cf_data,1)
 
         % fill in entry
         entry(j-1) = {[price_change, quantity_change,                   ...
-                        transfer_to_producer, consumer_deadweight,      ...
-                        producer_deadweight, producer_surplus_change,   ...
+                        transfer_to_producer, consumer_welfare_loss,      ...
+                        producer_welfare_loss, producer_surplus_change,   ...
                         consumer_surplus_change]};
         
     end

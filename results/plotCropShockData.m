@@ -12,8 +12,8 @@ function [ fig ] = plotCropShockData( data, countries, crop, data_type)
 %                                     3 for surplus_L1, 
 %                                     4 for surplus_L2, 
 %                                     5 for surplus_L3
-%                                     6 for % consumer surplus change
-%                                     7 for % producer surplus change
+%                                     6 for % producer surplus change
+%                                     7 for % consumer surplus change
 % ========================================================================
 % OUTPUT:
 %   figure1              
@@ -107,16 +107,16 @@ switch(data_type)
     case 2
         title_text = ['% Quantity Change of ' crop];
     case 3
-        title_text = ['$  of ' crop ' Surplus Transferred from ' ...
+        title_text = ['$ of ' crop ' Surplus Transferred from ' ...
             'Consumers to Producers'];
     case 4
-        title_text = ['$  of ' crop ' Welfare Loss borne by Consumers'];
+        title_text = ['$ of ' crop ' Welfare Loss borne by Consumers'];
     case 5
-        title_text = ['$  of ' crop ' Welfare Loss borne by Producers'];
+        title_text = ['$ of ' crop ' Welfare Loss borne by Producers'];
     case 6
-        title_text = ['% Change in ' crop ' Consumer Surplus over Time'];
-    case 7
         title_text = ['% Change in ' crop ' Producer Surplus over Time'];
+    case 7
+        title_text = ['% Change in ' crop ' Consumer Surplus over Time'];
     otherwise
         error(['Error: unknown data type: ' num2str(data_type)])
 end

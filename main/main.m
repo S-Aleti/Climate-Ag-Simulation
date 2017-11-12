@@ -11,3 +11,7 @@ data = analyzeShocks(epq_data, cf_data);
 %% Graph Results
 
 graphResults
+
+%% Export Data
+
+exportData(data, 'results/csv/results.csv');

@@ -1,5 +1,6 @@
-function [ raw_output, results ]  = analyzeShocksCross(epq_data,        ...
-    cf_data, format_results, elas_S_corn_soybean, elas_S_soybean_corn,  ...
+function [ results_matrix, formatted_results, filtered_data ]  =        ...
+    analyzeShocksCross(  epq_data, cf_data, format_results,             ...
+    elas_S_corn_soybean, elas_S_soybean_corn,                           ...
     elas_D_corn_soybean, elas_D_soybean_corn)
 % ========================================================================
 % ANALYZESHOCKSCROSS creates a linear supply and demand model based on the 
@@ -13,7 +14,7 @@ function [ raw_output, results ]  = analyzeShocksCross(epq_data,        ...
 %                                      crop A with respect to crop B
 % ========================================================================
 % OUTPUT:
-%   raw_output           (matrix)      contains the [percent_price_change, 
+%   results_matrix           (matrix)      contains the [percent_price_change, 
 %                                      percent_quantity_change,
 %                                      transfer_to_producer, 
 %                                      consumer_welfare_loss,
@@ -21,8 +22,12 @@ function [ raw_output, results ]  = analyzeShocksCross(epq_data,        ...
 %                                      producer_surplus_change,   
 %                                      consumer_surplus_change]
 %                                      by year for each country
-%   results              (cell array)  contains the same data as the 
+%   formatted_results    (cell array)  contains the same data as the 
 %                                      raw_ouput but with labels
+%   filtered_data        (cell array)  contains the list of countries and
+%                                      crops that there exists data for, 
+%                                      and corresponds to each row in the
+%                                      results_matrix matrix
 % ========================================================================
 
 
@@ -65,7 +70,7 @@ for i = 1:size(cf_data,1)
     
 end
 
-num_countries = size(filtered_data, 1);
+num_countrycrop = size(filtered_data, 1);
 
 
 %% Set up matrices of elasticities, prices, and quantities
@@ -79,8 +84,8 @@ num_countries = size(filtered_data, 1);
 
 % number of commodities
 n = length(unique(filtered_data(:,3)));
-% number of countries
-m = num_countries;
+% number of country and crop combinations
+m = num_countrycrop;
 
 % matrices containing data for all country-crops in filtered_data
 data_elas_D     = zeros(m);
@@ -88,7 +93,7 @@ data_elas_S     = zeros(m);
 data_prices     = zeros(m, 1);
 data_quantities = zeros(m, 1);
 
-for i = 1:num_countries
+for i = 1:num_countrycrop
     
     % get country and commodity
     country_id = filtered_data{i,1};
@@ -111,7 +116,7 @@ for i = 1:num_countries
     
     if strcmp(commodity, "corn")
         % fill elasticity matrices with corn's cross price elastcities
-        for j = 1:num_countries
+        for j = 1:num_countrycrop
             if strcmp(filtered_data{j,3}, "soybean")
                 data_elas_S(i, j) = elas_S_corn_soybean;
                 data_elas_D(i, j) = elas_D_corn_soybean;
@@ -121,7 +126,7 @@ for i = 1:num_countries
     
     if strcmp(commodity, "soybean")
         % fill elasticity matrices with soybeans's cross price elastcities
-        for j = 1:num_countries
+        for j = 1:num_countrycrop
             if strcmp(filtered_data{j,3}, "corn")
                 data_elas_S(i, j) = elas_S_soybean_corn;
                 data_elas_D(i, j) = elas_D_soybean_corn;
@@ -134,10 +139,6 @@ end
 
 %% Get coefficients
 
-% =========================================================================
-% =================================REMOVE==================================
-% =========================================================================
-
 data_elas_D = diag(diag(data_elas_D));
 data_elas_S = diag(diag(data_elas_S));
 
@@ -149,7 +150,7 @@ data_elas_S = diag(diag(data_elas_S));
 
 alpha_shocks = zeros(m, 10);
 
-for i = 1:num_countries
+for i = 1:num_countrycrop
     
     % get country and commodity
     country_id = filtered_data{i,1};
@@ -179,8 +180,8 @@ alpha_shocks = alpha_shocks - repmat(alpha_s + beta_s*data_prices, 1, 10);
 
 %% Simulate shocks 
 
-results = {};
-raw_output = zeros(10*num_countries, 7);
+formatted_results = {};
+results_matrix = zeros(10*num_countrycrop, 7);
 
 for i = 1:10 % for each year
     
@@ -201,9 +202,9 @@ for i = 1:10 % for each year
     consumer_surplus_change     = (output(:,8)-output(:,6)) ./ output(:,6); 
     producer_surplus_change     = (output(:,9)-output(:,7)) ./ output(:,7); 
     
-    row_range = (num_countries*(i-1)+1):(num_countries*(i));
+    row_range = (num_countrycrop*(i-1)+1):(num_countrycrop*(i));
     column_range = 1:7;
-    raw_output(row_range,column_range) = [                              ...
+    results_matrix(row_range,column_range) = [                              ...
                 price_change, quantity_change,                          ...
                 transfer_to_producer, consumer_welfare_loss,            ...
                 producer_welfare_loss, producer_surplus_change,         ...
@@ -211,9 +212,9 @@ for i = 1:10 % for each year
     
     if format_results % save time by setting this to false
         
-        for j = 1:num_countries % for each country   
+        for j = 1:num_countrycrop % for each country   
             
-            results = [results; {(i-1),                                 ...
+            formatted_results = [formatted_results; {(i-1),                                 ...
                             filtered_data{j, 2}, filtered_data{j, 3},   ...
                             price_change(j), quantity_change(j),        ...
                             transfer_to_producer(j),                    ...

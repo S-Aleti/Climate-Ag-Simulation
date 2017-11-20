@@ -46,11 +46,15 @@ average_result = mean(running_output, 3);
 
 %% Find rebound effect
 
-
+rebound = calculateReboundEffect(cf_data, results_matrix, filtered_data);
 
 
 %% Format Results
 
-data_table_average = formatOutput( average_result, labels );
+% contains results for each year, average of monte carlo simulation
+data_table_mean = formatOutput( average_result, labels );
 
-
+% contains data_table_mean averaged across all years
+table_yrs_avg = varfun(@mean, data_table_mean, 'GroupingVariables',     ...
+                            {'Country', 'Crop'});
+table_yrs_avg(:, 'mean_Year') = [];

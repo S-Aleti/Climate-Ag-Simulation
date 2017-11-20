@@ -11,7 +11,7 @@ function [ output ] = calculateShockCrossEffects( price, quantity, ...
 %   alpha_d              (vector) intercept of demand curve
 %   beta_d               (matrix) slope of demand curve
 %   alpha_s              (vector) intercept of supply curve
-%   beta_s               (vector) coefficients of supply curve
+%   beta_s               (matrix) coefficients of supply curve
 %   supply_shock         (vector) shift in supply curve
 % ========================================================================
 % OUTPUT:
@@ -65,15 +65,22 @@ surplus_L1 = (new_price - price) .* (pe_quantity + new_quantity) / 2;
 surplus_L2 = (quantity - pe_quantity) .* (new_price - price) / 2;
 
 % lost producer surplus
-surplus_L3 = (quantity .* (price - (alpha_s./( -diag(beta_s) ))) / 2) ...
-           - (pe_quantity .* (price - (alpha_s2./( -diag(beta_s )))) / 2);
+surplus_L3 = zeros(length(price), 1);
+for i = 1:length(price)
+
+    surplus_L3(i) = surplus_S1(i) - ( (1/2)*(price(i) -                ...
+        max((-alpha_s2(i)/beta_s(i)), 0)) * ((alpha_s2(i) +            ... 
+        beta_s(i)*price(i)) + (max(0, alpha_s2(i)))));
+                        
+end
 
 for i = 1:length(price)
     
     if new_price(i) < 0
         new_quantity(i) = 0;
         surplus_L1(i)   = 0;
-        surplus_L2(i)   = 0;
+        % welfare loss is all of present surplus
+        surplus_L2(i)   = surplus_S1(i) + surplus_C1(i);
         surplus_L3(i)   = 0;
         surplus_C2(i)   = 0;
         surplus_S2(i)   = 0;

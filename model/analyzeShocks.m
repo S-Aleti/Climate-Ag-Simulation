@@ -1,11 +1,11 @@
 function [ data ] = analyzeShocks(epq_data, cf_data)
-
+% ========================================================================
 % ANALYZESHOCKS creates a linear supply and demand model based on the epq
 % data and then simulates the effects in the cf_data using this model
 % ========================================================================
 % INPUT ARGUMENTS:
 %   epq_data             (cell array)  merge of elas_data and pq_data
-%   pq_data              (cell array)  contains price & quantity data
+%   cf_data              (cell array)  contains counterfactual data
 % ========================================================================
 % OUTPUT:
 %   data                 (cell array)  contains the {country_ID,
@@ -71,7 +71,7 @@ for i = 1:size(cf_data,1)
         percent_shock = (cf_data{i,j}-control_quantity)/control_quantity;
         quantity_cf = quantity*(1+percent_shock);
         alpha_shock = quantity_cf - alpha_s - beta_s*price;
-        
+                
         % find shock data
         output = calculateShockEffects( price, quantity, ...
                           alpha_d, beta_d, alpha_s, beta_s, alpha_shock);

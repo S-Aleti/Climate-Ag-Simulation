@@ -1,7 +1,8 @@
-function [ results_matrix, formatted_results, filtered_data ]  =        ...
-    analyzeShocksCross(  epq_data, cf_data, format_results,             ...
-    elas_S_corn_soybean, elas_S_soybean_corn,                           ...
-    elas_D_corn_soybean, elas_D_soybean_corn)
+function [ results_matrix, formatted_results, filtered_data,            ...
+    percent_shocks ] =  analyzeShocksCross(                             ...
+        epq_data, cf_data, format_results,                              ...
+        elas_S_corn_soybean, elas_S_soybean_corn,                       ...
+        elas_D_corn_soybean, elas_D_soybean_corn)
 % ========================================================================
 % ANALYZESHOCKSCROSS creates a linear supply and demand model based on the 
 % epq data and then simulates the effects in the cf_data using this model
@@ -11,6 +12,8 @@ function [ results_matrix, formatted_results, filtered_data ]  =        ...
 %   cf_data              (cell array)  contains counterfactual data
 %   format_results       (boolean)     toggle output of results array
 %   elas_S_[A]_[B]       (scalar)      supply cross price elasticity of
+%                                      crop A with respect to crop B
+%   elas_D_[A]_[B]       (scalar)      demand cross price elasticity of
 %                                      crop A with respect to crop B
 % ========================================================================
 % OUTPUT:
@@ -29,7 +32,6 @@ function [ results_matrix, formatted_results, filtered_data ]  =        ...
 %                                      and corresponds to each row in the
 %                                      results_matrix matrix
 % ========================================================================
-
 
 
 %% Get countries and commodities with data available
@@ -74,13 +76,6 @@ num_countrycrop = size(filtered_data, 1);
 
 
 %% Set up matrices of elasticities, prices, and quantities
-
-% PARAMS defined in function input
-% % cross supply
-% elas_S_corn_soybean = -0.076;
-% elas_S_soybean_corn = -0.13;
-% elas_D_corn_soybean = 0.123;
-% elas_D_soybean_corn = 0.123;
 
 % number of commodities
 n = length(unique(filtered_data(:,3)));
@@ -139,16 +134,14 @@ end
 
 %% Get coefficients
 
-data_elas_D = diag(diag(data_elas_D));
-data_elas_S = diag(diag(data_elas_S));
-
 [ alpha_d, beta_d, alpha_s, beta_s ] =  calculateCoefficients(          ...
     data_elas_D, data_elas_S, data_prices, data_quantities);
 
 
 %% Introduce yearly shocks
 
-alpha_shocks = zeros(m, 10);
+alpha_shocks   = zeros(m, 10);
+percent_shocks = zeros(m, 10);
 
 for i = 1:num_countrycrop
     
@@ -170,6 +163,7 @@ for i = 1:num_countrycrop
         percent_shock = (cf_data{ind,j}-control_quantity)/control_quantity;
         quantity_cf   = data_quantities(i)*(1+percent_shock);
         alpha_shocks(i, j-4) = quantity_cf; 
+        percent_shocks(i, j-4) = percent_shock;
         
     end
     

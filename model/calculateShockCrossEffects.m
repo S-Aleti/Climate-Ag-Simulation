@@ -74,9 +74,18 @@ for i = 1:length(price)
                         
 end
 
-for i = 1:length(price)
+for i = 1:length(new_price)
     
     if new_price(i) < 0
+        new_price(i) = 0;
+    end
+    
+end
+
+for i = 1:length(new_price)
+    
+    if new_price(i) == 0 && new_quantity(i) < 0  % no supply
+        new_price(i)    = 0;
         new_quantity(i) = 0;
         surplus_L1(i)   = 0;
         % welfare loss is all of present surplus
@@ -84,6 +93,18 @@ for i = 1:length(price)
         surplus_L3(i)   = 0;
         surplus_C2(i)   = 0;
         surplus_S2(i)   = 0;
+    elseif new_price(i) == 0 && new_quantity(i) > 0 % over supply 
+        new_price(i)    = 0;
+        new_quantity(i) = alpha_d(i) + beta_d(i,:)*new_price;
+        surplus_C2(i)   = 0;
+        % producer loses all surplus, consumer gains
+        surplus_L1(i)   = -(price(i))*(alpha_d(i) + quantity(i))/2;
+        surplus_L2(i)   = 0;
+        surplus_L3(i)   = -surplus_L1(i);
+        % new cons surplus is all of production, prod surplus is nil
+        surplus_C2(i)   = 0;%new_quantity(i) * (1/2) * ...
+            %(-(alpha_d(i) + beta_d(i,:)*new_price)/beta_d(i,i));
+        surplus_S2(i)   = 0;         
     end
 
 end

@@ -169,6 +169,7 @@ for i = 1:num_countrycrop
     
 end
 
+alpha_shocks2 = alpha_shocks;
 alpha_shocks = alpha_shocks - repmat(alpha_s + beta_s*data_prices, 1, 10);
 
 
@@ -195,7 +196,7 @@ for i = 1:10 % for each year
     % percent change in surpluses
     consumer_surplus_change     = (output(:,8)-output(:,6)) ./ output(:,6); 
     producer_surplus_change     = (output(:,9)-output(:,7)) ./ output(:,7); 
-    
+        
     row_range = (num_countrycrop*(i-1)+1):(num_countrycrop*(i));
     column_range = 1:7;
     results_matrix(row_range,column_range) = [                              ...

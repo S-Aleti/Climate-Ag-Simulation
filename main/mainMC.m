@@ -8,15 +8,15 @@
 %% Get Results
 
 % PARAMS
-trials = 100;           % monte carlo trials
+trials = 10;           % monte carlo trials
 format_results = false; % set to true to get formatted results
 % elasticities
 elas_S_corn_soybean = -0.076;
 elas_S_soybean_corn = -0.13;
 elas_D_corn_soybean = 0.123;
 
-% pre-alloc
-running_output = zeros(24*10, 7, trials); % contains output for each trial
+% pre-alloc output for each multimarket trial
+running_output = zeros(24*10, 7, trials); 
 
 % distribution
 % pd = makedist('Triangle', 'a', 0, 'b', 0.15, 'c', 0.30);
@@ -38,15 +38,20 @@ parfor trial = 1:trials
 end
 toc
 
+partial_eq_result = analyzeShocksCross(epq_data, cf_data, 0,0,0,0,0);
+
+
+%% Process results
+
 average_result = mean(running_output, 3);
 
-% filtered data contains list of countries and crops analyzed
-[ ~, ~, filtered_data ] = analyzeShocksCross(epq_data, cf_data, 0,0,0,0,0);
+% labels contains list of countries and crops analyzed
+[ ~, ~, labels ] = analyzeShocksCross(epq_data, cf_data, 0,0,0,0,0);
 
 
 %% Find rebound effect
 
-rebound = calculateReboundEffect(cf_data, results_matrix, filtered_data);
+rebound = calculateReboundEffect(cf_data, average_result, labels);
 
 
 %% Format Results

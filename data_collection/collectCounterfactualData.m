@@ -31,13 +31,13 @@ commodity = sheet_names(sheet);
 data = {};
 
 % open waitbar
-h = waitbar(0,'Collecting counterfactual data');
+%h = waitbar(0,'Collecting counterfactual data');
 data_size = size(xls_raw,1);
 
 for i = 2:size(xls_raw,1)
    
     % update wait bar
-    waitbar(i/data_size,h);
+    %waitbar(i/data_size,h);
     
     % if none of the cells are empty
     if ( ~(  isCellEmpty(xls_raw(i,c_code_col))       || ...
@@ -69,7 +69,7 @@ for i = 2:size(xls_raw,1)
 end
 
 % close waitbar
-close(h)
+%close(h)
 
 end
 

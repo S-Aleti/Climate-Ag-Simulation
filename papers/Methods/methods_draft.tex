@@ -12,6 +12,8 @@
 \usepackage{multirow,array}
 \usepackage{float}
 \usepackage{graphicx}
+\usetikzlibrary{calc}                                %allows coordinate calculations.
+\usetikzlibrary{decorations.pathreplacing}           %allows drawing curly braces.
 
 
 \begin{document}
@@ -31,13 +33,13 @@ The effects of exogenous shocks to crop production and their welfare implication
 First, we used a linear approximation of the supply and demand schedules for each crop $i$ by taking estimates of supply and demand elasticity and computing:
 \begin{subequations}
 	\begin{align}
-	\textbf{Supply: } & Q_{i} = \alpha_{s, i} + \beta_{s, i} P_i 				\\
-	\textbf{Demand: } & Q_{i} = \alpha_{d, i} + \beta_{d, i} P_i 	
+	\textbf{Supply: } & Q_{s, i} = \alpha_{s, i} + \beta_{s, i} P_i 				\\
+	\textbf{Demand: } & Q_{d, i} = \alpha_{d, i} + \beta_{d, i} P_i 	
 	\end{align}
 \end{subequations}
 This was done using current data on the production and prices while assuming the markets were currently in equilibrium. For instance, given the price, quantity, and elasticity of demand of a commodity, we can find:  
 \begin{align*}
-\beta_{d, i}  &= e_{d, i} \, Q_{i} / P_{i} \\
+\beta_{d, i}  &= e_{d, i} \cdot Q_{i} / P_{i} \\
 \alpha_{d, i} &= Q_{i} - \beta_{d, i} P_{i}
 \end{align*}
 
@@ -63,8 +65,7 @@ where $P_{i, t}^*$ denotes the price in the counterfactual scenario. From here, 
 \begin{figure}
 \centering
 \begin{tikzpicture}[domain=0:5,scale=1,thick]
-\usetikzlibrary{calc}                                %allows coordinate calculations.
-\usetikzlibrary{decorations.pathreplacing}           %allows drawing curly braces.
+
 
 % Define linear parameters for supply and demand
 \def\dint{5.5}      %Y-intercept for DEMAND.
@@ -131,6 +132,51 @@ where $P_{i, t}^*$ denotes the price in the counterfactual scenario. From here, 
 \end{figure}
 
 Along with computing changes in the consumer and producer surplus, we also compute transfers between the two. In the above figure, the blue region consists of surplus transfered from the consumer to the producer, the red region consists of surplus lost by the producer, and the green region consists of surplus lost by the consumer. 
+
+
+\section{Multi-market Model}	
+
+The multi-market model introduces cross-price elasticities between different crops and regions. We calculate welfare implications in the same way and use the same set of counterfactual data to introduce the shocks to individual crops.
+
+To begin, we use a linear approximation of supply and demand given their elasticities as before. The supply and demand of the set of crops is computed using:
+\begin{subequations}
+	\begin{align}
+	\textbf{Supply: } & Q_{s} = \alpha_{s} + \beta_{s} P 				\\
+	\textbf{Demand: } & Q_{d} = \alpha_{d} + \beta_{d} P 	
+	\end{align}
+\end{subequations}
+
+Here, $\beta$ is a $n \times n$ matrix and $\alpha$ is a vector. Additionally, $P$ and $Q$ refer to the equilibrium price and quantity in the control scenario. The values of $\beta$ and $\alpha$ are set accordingly:
+\begin{align*}
+\beta_{d, i, j}  &= e_{d, i, j} \cdot Q_{i} / P_{i, t} \\
+\alpha_{d} &= Q - \beta_{d} P
+\end{align*}
+where $e$ is a matrix of elasticities; $e_{d, i, j}$, for example, represents the cross-price elasticity of demand between crop $i$ and $j$. We treat the crops of the same type but of different origin as different crops for the analysis; that is, the Armington assumption. 
+
+The counterfactual shocks are obtained in the same way as in the partial equillibrium model. Each shock is introduced to the supply side of the model by finding an appropriate $\alpha_{s, t}^*$ to shift the intercept such that $Q_{t}^*$ is supplied if prices are held constant.
+\begin{subequations}
+	\begin{align}
+	\textbf{Shocked Supply: } & Q_{t}^* = \alpha_{s, t}^* + \alpha_{s} + \beta_{s} P_{t}
+	\end{align}
+\end{subequations}	
+After finding $\alpha_{s, t}^*$, we then find the new equillibrium price and quantity vectors, $P_t$ and $Q_t$. 
+
+Lastly, the change in welfare is computed in a similar way. Due to cross-price elasticities of demand, changes in the prices of crops in one region affect the demand curves of crops in others. Thus, there are demand shocks that result from shocking the supply. So, we make the following welfare calculations:
+\begin{align*}
+S_{L1} &= (P_t - P) \circ (Q^*_t + Q_t) / 2 \\
+S_{L2} &= (Q_t - Q_t^*) \circ (P_t - P) \\
+S_{L3, i} &= S_{S1} - (0.5\cdot P_i - \max(\-(\alpha_{s, i, t}^* + \alpha_{s, i})/\beta_{s, i}, 0) \cdot (Q_{i, t}^* + \max(0, \alpha_{s, i, t}^* + \alpha_{s, i})
+\end{align*}
+
+The $\circ$ notation refers to the Hadamard product - elementwise multiplication. We define $S_{L1}$ as the lost consumer surplus captured by the producer, $S_{L2}$ as the lost consumer surplus not captured by the producer, and $S_{L3}$ as the lost producer surplus. The welfare effects are recalculated appropriately in the edge cases where $P_{i, t} \leq 0$ or $Q_{i, t} \leq 0$. 
+
+
+
+
+
+
+
+
 
 
 \end{document}

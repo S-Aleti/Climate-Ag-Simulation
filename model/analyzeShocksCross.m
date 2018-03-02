@@ -140,8 +140,9 @@ end
 
 %% Introduce yearly shocks
 
-alpha_shocks   = zeros(m, 10);
-percent_shocks = zeros(m, 10);
+n_yrs = size(cf_data, 2) - 4;
+alpha_shocks   = zeros(m, n_yrs);
+percent_shocks = zeros(m, n_yrs);
 
 for i = 1:num_countrycrop
     
@@ -170,15 +171,16 @@ for i = 1:num_countrycrop
 end
 
 alpha_shocks2 = alpha_shocks;
-alpha_shocks = alpha_shocks - repmat(alpha_s + beta_s*data_prices, 1, 10);
+alpha_shocks = alpha_shocks - repmat(alpha_s + beta_s*data_prices, ...
+    1, n_yrs);
 
 
 %% Simulate shocks 
 
 formatted_results = {};
-results_matrix = zeros(10*num_countrycrop, 7);
+results_matrix = zeros(n_yrs*num_countrycrop, 7);
 
-for i = 1:10 % for each year
+for i = 1:n_yrs % for each year
     
     [ output ] = calculateShockCrossEffects( data_prices,               ...
             data_quantities, alpha_d, beta_d, alpha_s, beta_s,          ...
@@ -199,7 +201,7 @@ for i = 1:10 % for each year
         
     row_range = (num_countrycrop*(i-1)+1):(num_countrycrop*(i));
     column_range = 1:7;
-    results_matrix(row_range,column_range) = [                              ...
+    results_matrix(row_range,column_range) = [                          ...
                 price_change, quantity_change,                          ...
                 transfer_to_producer, consumer_welfare_loss,            ...
                 producer_welfare_loss, producer_surplus_change,         ...
@@ -209,7 +211,7 @@ for i = 1:10 % for each year
         
         for j = 1:num_countrycrop % for each country   
             
-            formatted_results = [formatted_results; {(i-1),                                 ...
+            formatted_results = [formatted_results; {(i),               ...
                             filtered_data{j, 2}, filtered_data{j, 3},   ...
                             price_change(j), quantity_change(j),        ...
                             transfer_to_producer(j),                    ...

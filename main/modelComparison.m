@@ -3,9 +3,33 @@
 % model, the partial equillibrium model, and the multimarket model
 % ========================================================================
 
-%% Get results
+%% Collect raw data
 
-[ elas_data, pq_data, epq_data, cf_data ] = collectData( 'load' );
+[ elas_data, pq_data, epq_data, cf_data ] = collectData( 'recollect' , ...
+    'crop_data/xlsx_data/');
+
+% counterfactual scenarios
+scenarios_count = 2;
+cf_data_scenarios = {};
+
+for j = 1:scenarios_count
+    
+    file_name   = ['crop_data\xlsx_data/Counterfactual_Data_scenario'  ...
+        num2str(j) '.xlsx'];
+    cf_data_temp = {};
+
+    % each sheet contains cf data for a specific commodity
+    for i = 1:5
+        cf_data_temp = [cf_data_temp; collectCounterfactualData(    ...
+            file_name, 2, 1, 3, i)];
+    end
+    
+    cf_data_scenarios{j} = cf_data_temp;
+
+end
+
+
+%% Get results
 
 %%% Multimarket Model - Monte Carlo sim
 
@@ -27,6 +51,9 @@ pd  = makedist('Uniform', 'lower', 0, 'upper', 0.30);
 tic
 % each trial takes about 3 seconds
 for trial = 1:trials
+    
+    % get random counterfactual data
+    cf_data = cf_data_scenarios{randi(scenarios_count)};
     
     % generate random elasticity
     elas_D_soybean_corn = random(pd);

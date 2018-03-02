@@ -1,10 +1,12 @@
-function [ elas_data, pq_data, epq_data, cf_data ] = collectData( arg )
-
+function [ elas_data, pq_data, epq_data, cf_data ] = collectData( arg, ...
+    data_folder)
+% ========================================================================
 % COLLECTDATA can either recollect the data from the excel files or load
 % previously collected data from the 'data' folder
 % ========================================================================
 % INPUT ARGUMENTS:
 %   arg                  (string) either 'load' or 'recollect'
+%   data_folder          (string) folder containing the xlsx files
 % ========================================================================
 % OUTPUT:
 %   elas_data            (cell array) contains elasticity data
@@ -27,7 +29,7 @@ elseif (isequal(arg,'recollect'))
 
     disp('Collecting elasticity data...')
 
-    file_name = 'data/Elasticity_Data.xlsx';
+    file_name = [data_folder '/Elasticity_Data.xlsx'];
     elas_data = collectElasticityData(file_name, 1, 2, 3, 4, 6, 7);
 
 
@@ -35,7 +37,7 @@ elseif (isequal(arg,'recollect'))
 
     disp('Collecting price and quantity data...')
 
-    file_name   = 'data/FAO_Production_Data.xlsx';
+    file_name   = [data_folder '/FAO_Production_Data.xlsx'];
     pq_data = collectPriceQuantityData(file_name, 1,  1, 2, 11, 4, 15, 13);
 
 
@@ -50,7 +52,7 @@ elseif (isequal(arg,'recollect'))
 
     disp('Collecting counterfactual data...')
 
-    file_name   = 'data/Counterfactual_Data.xlsx';
+    file_name   = [data_folder '/Counterfactual_Data.xlsx'];
     cf_data = {};
 
     % each sheet contains cf data for a specific commodity

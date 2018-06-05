@@ -1,4 +1,4 @@
-Year,Country,Crop,Percent_Price_Change,Percent_Quantity_Change,Welfare_Transfer_to_Producer,Welfare_lost_by_Consumer,Welfare_lost_by_Producer,Percent_Change_in_Producer_Surplus,Percent_Change_in_Consumer_Surplus
+Scenario,Country,Crop,Percent_Price_Change,Percent_Quantity_Change,Welfare_Transfer_to_Producer,Welfare_lost_by_Consumer,Welfare_lost_by_Producer,Percent_Change_in_Producer_Surplus,Percent_Change_in_Consumer_Surplus
 1,Argentina,corn,0.258283978856926,-0.243962209263777,1082053416.66807,-7559637.48604831,1201792410.20175,-0.266189351343771,-0.73565542555977
 1,Australia,corn,0.209129319778988,-0.221529845592022,21263567.2926086,-1830129.19463502,22312300.3486077,-0.098691146392423,-0.60217951109105
 1,Brazil,corn,-0.254369988756976,-0.0899703194746083,-4464897378.63593,857431666.125706,326985927.85923,-0.313677790203726,0.326368240963805

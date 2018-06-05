@@ -29,8 +29,8 @@ for year = 0:9
         transfer_to_producer     = results_matrix(row+i, 3);
         consumer_welfare_loss    = results_matrix(row+i, 4);
         producer_welfare_loss    = results_matrix(row+i, 5);
-        consumer_surplus_change  = results_matrix(row+i, 6);
-        producer_surplus_change  = results_matrix(row+i, 7);
+        producer_surplus_change  = results_matrix(row+i, 6);
+        consumer_surplus_change  = results_matrix(row+i, 7);
         
         data = [data; {year, country, crop,                             ...
                        price_change, quantity_change,                   ...

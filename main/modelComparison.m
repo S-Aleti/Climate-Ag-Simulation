@@ -34,7 +34,7 @@ end
 %%% Multimarket Model - Monte Carlo sim
 
 % PARAMS
-trials = 10;           % monte carlo trials
+trials = 1;           % monte carlo trials
 format_results = false; % set to true to get formatted results
 % elasticities
 elas_S_corn_soybean = -0.076;
@@ -56,7 +56,7 @@ for trial = 1:trials
     cf_data = cf_data_scenarios{randi(scenarios_count)};
     
     % generate random elasticity
-    elas_D_soybean_corn = random(pd);
+    elas_D_soybean_corn = 0%random(pd);
 
     [ results, ~, ~, ~ ]  = analyzeShocksCross(epq_data,                ...
         cf_data, format_results, elas_S_corn_soybean,                   ...

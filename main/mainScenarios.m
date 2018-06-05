@@ -8,7 +8,7 @@
 scenarios_xlsx_file = '/crop_data/xlsx_data/crop-GTAP-003-yr4.xlsx';
 
 % results file loc
-results_file = 'results/csv/results_yr4_pe.csv';
+results_file = 'results/csv/results_yr4_mm.csv';
 
 % elasticities
 elas_S_corn_soybean = 0%-0.076;
@@ -97,10 +97,10 @@ end
 results_table = cell2table(formatted_results);
 
 
-var_names = {'Year', 'Country', 'Crop', 'Percent_Price_Change',         ...
+var_names = {'Scenario', 'Country', 'Crop', 'Percent_Price_Change',     ...
     'Percent_Quantity_Change', 'Welfare_Transfer_to_Producer',          ...
     'Welfare_lost_by_Consumer', 'Welfare_lost_by_Producer',             ...
-    'Percent_Change_in_Producer_Surplus',                       ...
+    'Percent_Change_in_Producer_Surplus',                               ...
     'Percent_Change_in_Consumer_Surplus'};
 
 results_table.Properties.VariableNames = var_names;

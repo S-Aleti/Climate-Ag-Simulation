@@ -141,7 +141,7 @@ end
 %% Introduce yearly shocks
 
 n_yrs = size(cf_data, 2) - 4;
-alpha_shocks   = zeros(m, n_yrs);
+shocked_quantities   = zeros(m, n_yrs);
 percent_shocks = zeros(m, n_yrs);
 
 for i = 1:num_countrycrop
@@ -160,18 +160,17 @@ for i = 1:num_countrycrop
     
     % calculate shocks for each year
     for j = 5:14
-       
+        
         percent_shock = (cf_data{ind,j}-control_quantity)/control_quantity;
         quantity_cf   = data_quantities(i)*(1+percent_shock);
-        alpha_shocks(i, j-4) = quantity_cf; 
+        shocked_quantities(i, j-4) = quantity_cf; 
         percent_shocks(i, j-4) = percent_shock;
         
     end
     
 end
 
-alpha_shocks2 = alpha_shocks;
-alpha_shocks = alpha_shocks - repmat(alpha_s + beta_s*data_prices, ...
+alpha_shocks = shocked_quantities - repmat(data_quantities, ...
     1, n_yrs);
 
 
@@ -181,7 +180,7 @@ formatted_results = {};
 results_matrix = zeros(n_yrs*num_countrycrop, 7);
 
 for i = 1:n_yrs % for each year
-    
+
     [ output ] = calculateShockCrossEffects( data_prices,               ...
             data_quantities, alpha_d, beta_d, alpha_s, beta_s,          ...
             alpha_shocks(:, i));

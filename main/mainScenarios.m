@@ -39,7 +39,7 @@ crops = {'Corn', 'Soybean', 'Rice'};
 for scn_crop = crops
 
     % replace with shocks from scenarios_xlsx_file
-    [~, ~, scenario_xls_raw]  = xlsread(scenarios_xlsx_file, 'Soybean');
+    [~, ~, scenario_xls_raw]  = xlsread(scenarios_xlsx_file, scn_crop{:});
 
     % for each country in cf_data
     for i = 1:size(cf_data, 1)
@@ -86,6 +86,9 @@ end
 
 
 %% Get results
+
+% Use CGE elasticity 
+epq_data(:,7) = {-0.808};
 
 [ results_mat, formatted_results, ~ ]  = analyzeShocksCross(epq_data,  ...
     cf_data, 1, elas_S_corn_soybean,                                   ...

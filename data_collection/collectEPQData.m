@@ -27,7 +27,7 @@ for i = 1:size(pq_data,1)
     waitbar(i/data_size,h);
     
     % from supply and demand data
-    c_code         = cell2mat(pq_data(i,1)); % country identification code
+    c_code       = cell2mat(pq_data(i,1)); % country identification code
     country      = cell2mat(pq_data(i,2));
     commodity    = lower(cell2mat(pq_data(i,3)));
     year         = cell2mat(pq_data(i,4));

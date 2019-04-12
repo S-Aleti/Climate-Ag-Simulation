@@ -159,7 +159,7 @@ for i = 1:num_countrycrop
     control_quantity = cf_data{ind,4};
     
     % calculate shocks for each year
-    for j = 5:14
+    for j = 5:(n_yrs+4)
         
         percent_shock = (cf_data{ind,j}-control_quantity)/control_quantity;
         quantity_cf   = data_quantities(i)*(1+percent_shock);
@@ -193,18 +193,25 @@ for i = 1:n_yrs % for each year
     transfer_to_producer        = output(:,3);
     consumer_welfare_loss       = output(:,4);
     producer_welfare_loss       = output(:,5);
+    
+    % actual change in surpluses
+    consumer_surplus_change     = (output(:,8)-output(:,6)); 
+    producer_surplus_change     = (output(:,9)-output(:,7)); 
 
     % percent change in surpluses
-    consumer_surplus_change     = (output(:,8)-output(:,6)) ./ output(:,6); 
-    producer_surplus_change     = (output(:,9)-output(:,7)) ./ output(:,7); 
+    consumer_surplus_pct_change   = (output(:,8)-output(:,6))           ...
+                                        ./ output(:,6); 
+    producer_surplus_pct_change      = (output(:,9)-output(:,7))        ...
+                                       ./ output(:,7);
         
     row_range = (num_countrycrop*(i-1)+1):(num_countrycrop*(i));
-    column_range = 1:7;
+    column_range = 1:9;
     results_matrix(row_range,column_range) = [                          ...
                 price_change, quantity_change,                          ...
                 transfer_to_producer, consumer_welfare_loss,            ...
                 producer_welfare_loss, producer_surplus_change,         ...
-                consumer_surplus_change];
+                consumer_surplus_change, producer_surplus_pct_change,   ...
+                consumer_surplus_pct_change];
     
     if format_results % save time by setting this to false
         
@@ -217,7 +224,9 @@ for i = 1:n_yrs % for each year
                             consumer_welfare_loss(j),                   ...
                             producer_welfare_loss(j),                   ...
                             producer_surplus_change(j),                 ...
-                            consumer_surplus_change(j)}];
+                            consumer_surplus_change(j),                 ...
+                            producer_surplus_pct_change(j),             ...
+                            consumer_surplus_pct_change(j)}];
                         
         end
                     

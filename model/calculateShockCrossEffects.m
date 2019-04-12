@@ -25,7 +25,7 @@ function [ output ] = calculateShockCrossEffects( price, quantity, ...
 surplus_C1 = (1/2) * (quantity) .* ( (-alpha_d./diag(beta_d)) - price);
 
 % Producer surplus
-surplus_S1 = (1/2) * (max(0, alpha_s) + quantity)...
+surplus_S1 = (1/2) * (max(0, alpha_s) + quantity)                      ...
              .* (price - max(0, -alpha_s ./ diag(beta_s)));
 
 %% Introduce Supply Shock
@@ -47,10 +47,11 @@ alpha_d + beta_d*new_price;
 %% Calculate New Surpluses
 
 % New Consumer surplus
-surplus_C2 = (1/2)*(new_quantity).*((-alpha_d ./ diag(beta_d)) - new_price);
+surplus_C2 = (1/2)*(new_quantity).*                                    ...
+               ((-alpha_d ./ diag(beta_d)) - new_price);
 
 % New Producer surplus
-surplus_S2 = (1/2)*(max(0, alpha_s2) + new_quantity)...
+surplus_S2 = (1/2)*(max(0, alpha_s2) + new_quantity)                   ...
              .* (new_price - max(0, -(alpha_s2) ./ diag(beta_s)));
 
 %% Calculate Change in Surpluses
@@ -65,14 +66,7 @@ surplus_L1 = (new_price - price) .* (pe_quantity + new_quantity) / 2;
 surplus_L2 = (quantity - pe_quantity) .* (new_price - price) / 2;
 
 % lost producer surplus
-surplus_L3 = zeros(length(price), 1);
-for i = 1:length(price)
-
-    surplus_L3(i) = surplus_S1(i) - ( (1/2)*(price(i) -                ...
-        max((-alpha_s2(i)/beta_s(i)), 0)) * ((alpha_s2(i) +            ... 
-        beta_s(i)*price(i)) + (max(0, alpha_s2(i)))));
-                        
-end
+surplus_L3 = surplus_S1 - surplus_S2 + surplus_L1;
 
 for i = 1:length(new_price)
     

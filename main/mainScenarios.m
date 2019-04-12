@@ -5,10 +5,10 @@
 %% Params
 
 % scenario data
-scenarios_xlsx_file = '/crop_data/xlsx_data/crop-GTAP-003-yr4.xlsx';
+scenarios_xlsx_file = '/crop_data/xlsx_data/CLM5_Country_Shock_Ave.xlsx';
 
 % results file loc
-results_file = 'results/csv/results_yr4_mm.csv';
+results_file = 'results/csv/results_CLM5_pe.csv';
 
 % elasticities
 elas_S_corn_soybean = 0%-0.076;
@@ -51,7 +51,7 @@ for scn_crop = crops
         cf_crop = cf_data{i, 3};
 
         % search country in scenario data
-        for j = 4:size(scenario_xls_raw, 1)
+        for j = 2:size(scenario_xls_raw, 1)
 
             scn_country = scenario_xls_raw{j, 1};
 
@@ -64,10 +64,10 @@ for scn_crop = crops
                 q_initial = cf_data{i, 4};
                 
                 % percent shocks from scenarios
-                pct_shocks = cell2mat(scenario_xls_raw(j,3:33));
+                pct_shocks = cell2mat(scenario_xls_raw(j,3:28));
                 
                 % new quantites implied by scenarios
-                q_scenarios = (1 + pct_shocks/100) * q_initial;
+                q_scenarios = (1 + pct_shocks) * q_initial;
                 
                 % update cf_data
                 for k = 1:length(q_scenarios)
@@ -84,14 +84,18 @@ for scn_crop = crops
     
 end
 
+% Drop rows without scenario data 
+ind = ~cellfun(@isempty, cf_data(:,30));
+cf_data = cf_data(ind, :);
+
 
 %% Get results
 
 % Use CGE elasticity 
 epq_data(:,7) = {-0.808};
 
-[ results_mat, formatted_results, ~ ]  = analyzeShocksCross(epq_data,  ...
-    cf_data, 1, elas_S_corn_soybean,                                   ...
+[ results_mat, formatted_results, ~ ]  = analyzeShocksCross(epq_data,   ...
+    cf_data, 1, elas_S_corn_soybean,                                    ...
     elas_S_soybean_corn, elas_D_corn_soybean, elas_D_soybean_corn);
 
 
@@ -103,6 +107,8 @@ results_table = cell2table(formatted_results);
 var_names = {'Scenario', 'Country', 'Crop', 'Percent_Price_Change',     ...
     'Percent_Quantity_Change', 'Welfare_Transfer_to_Producer',          ...
     'Welfare_lost_by_Consumer', 'Welfare_lost_by_Producer',             ...
+    'Change_in_Producer_Surplus',                                       ...
+    'Change_in_Consumer_Surplus',                                       ...
     'Percent_Change_in_Producer_Surplus',                               ...
     'Percent_Change_in_Consumer_Surplus'};
 
@@ -111,9 +117,9 @@ results_table.Properties.VariableNames = var_names;
 try 
     writetable(results_table, results_file);
     fprintf('Results saved to %s\n', results_file);
+catch
+    fprintf('Error saving results\n');
 end
-
-
 
 
 

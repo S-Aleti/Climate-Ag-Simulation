@@ -10,11 +10,12 @@ scenarios_xlsx_file = '/crop_data/xlsx_data/CLM5_Country_Shock_Ave.xlsx';
 % results file loc
 results_file = 'results/csv/results_CLM5_pe.csv';
 
-% elasticities
-elas_S_corn_soybean = 0%-0.076;
-elas_S_soybean_corn = 0%-0.13;
-elas_D_corn_soybean = 0%0.123;
-elas_D_soybean_corn = 0%0.15;
+% elasticities: use CGE elasticity 
+epq_data(:,7) = {-0.808};
+elas_S_corn_soybean = 0;
+elas_S_soybean_corn = 0;
+elas_D_corn_soybean = -0%.808;
+elas_D_soybean_corn = -0%.808;
 
 
 %% Collect Data
@@ -91,9 +92,6 @@ cf_data = cf_data(ind, :);
 
 %% Get results
 
-% Use CGE elasticity 
-epq_data(:,7) = {-0.808};
-
 [ results_mat, formatted_results, ~ ]  = analyzeShocksCross(epq_data,   ...
     cf_data, 1, elas_S_corn_soybean,                                    ...
     elas_S_soybean_corn, elas_D_corn_soybean, elas_D_soybean_corn);
@@ -104,13 +102,15 @@ epq_data(:,7) = {-0.808};
 results_table = cell2table(formatted_results);
 
 
-var_names = {'Scenario', 'Country', 'Crop', 'Percent_Price_Change',     ...
+var_names = {'Year', 'Country', 'Crop', 'Percent_Price_Change',         ...
     'Percent_Quantity_Change', 'Welfare_Transfer_to_Producer',          ...
     'Welfare_lost_by_Consumer', 'Welfare_lost_by_Producer',             ...
     'Change_in_Producer_Surplus',                                       ...
     'Change_in_Consumer_Surplus',                                       ...
     'Percent_Change_in_Producer_Surplus',                               ...
-    'Percent_Change_in_Consumer_Surplus'};
+    'Percent_Change_in_Consumer_Surplus',                               ...
+    'Producer_Surplus_Original',                                        ...
+    'Consumer_Surplus_Original'};
 
 results_table.Properties.VariableNames = var_names;
 

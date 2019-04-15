@@ -1,224 +1,138 @@
 library(tidyverse)
 library(ggplot2)
 library(scales)
+library(grid)
+library(ggthemes)
 
-folder <- '~/GitHub/Climate-Ag-Simulation/results/'
+### Functions
 
-data_mm <- read_csv(paste(folder, 'csv/results_multimarket.csv', sep = ''))
-data_pe <- read_csv(paste(folder, 'csv/results_partialeq.csv', sep = ''))
+capitalize <- function(s) {
+    paste(toupper(substring(s, 1, 1)), substring(s, 2), sep = "")
+}
 
-data_mm <- filter(data_mm, Country %in% 
-                    c('India', 'United States', 'China', 'Brazil'))
-data_pe <- filter(data_pe, Country %in% 
-                    c('India', 'United States', 'China', 'Brazil'))
+theme_custom <- function() {
+    (theme_foundation(base_size=12) +
+         theme(plot.title = element_text(face = "bold",
+                                         size = rel(1.2), hjust = 0.5),
+               plot.subtitle = element_text(size = rel(1.2), hjust = 0.5),
+               text = element_text(),
+               panel.background = element_rect(colour = NA),
+               plot.background = element_rect(colour = NA),
+               panel.border = element_rect(colour = NA),
+               axis.title = element_text(face = "bold",size = rel(1)),
+               axis.title.y = element_text(angle=90,vjust =2),
+               axis.title.x = element_text(vjust = -0.2),
+               axis.text = element_text(),
+               axis.line = element_line(colour="black"),
+               axis.ticks = element_line(),
+               panel.grid.major = element_line(colour="#f0f0f0"),
+               panel.grid.minor = element_blank(),
+               legend.key = element_rect(colour = NA),
+               legend.title = element_text(face="italic"),
+               strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+               strip.text = element_text(face="bold"))
+     )
+}
 
-### Corn
+### Import Data
 
-crop_selected <- 'corn'
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+folder <- '../results/'
 
-## Price Change
+data_mm <- read_csv(paste(folder, 'csv/results_CLM5_mm.csv', sep = ''))
+data_pe <- read_csv(paste(folder, 'csv/results_CLM5_pe.csv', sep = ''))
 
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Price_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-0.5,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Multimarket', subtitle = '% Change in Price over Time',
-       y = '% Change in Price')
+# Merge data
+data_mm$Type <- 'Multimarket'
+data_pe$Type <- 'Partial Equilibrium'
+data <- rbind(data_mm, data_pe)
 
+# Clean data frame
+data <- filter(data, Country %in%
+                  c('India', 'United States', 'China', 'Brazil'))
+data <- data %>%
+        mutate(Crop = capitalize(Crop))
 
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_price_change.png'))
+### Graphs
 
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Price_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-0.5,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Partial Eq', subtitle = '% Change in Price over Time',
-       y = '% Change in Price')  
+for (crop_selected in unique(data$Crop)) {
+    for (type_selected in unique(data$Type)) {
 
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_price_change.png'))
-
-## Quantity Change
-
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Quantity_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-0.5,1,by = .02)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Multimarket', subtitle = '% Change in Quantity over Time',
-       y = '% Change in Quantity')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_quantity_change.png'))
-
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Quantity_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-0.5,1,by = .02)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Partial Eq', subtitle = '% Change in Quantity over Time',
-       y = '% Change in Quantity')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_quantity_change.png'))
-
-## Producer Surplus  Change
-
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Producer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Multimarket', 
-       subtitle = '% Change in Producer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_prod_surplus_change.png'))
-
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Producer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-0.5,1,by = .1)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Partial Eq', 
-       subtitle = '% Change in Producer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_prod_surplus_change.png'))
-
-## Consumer Surplus  Change
-
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Consumer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Multimarket', 
-       subtitle = '% Change in Consumer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_cons_surplus_change.png'))
-
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Consumer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Corn - Partial Eq', 
-       subtitle = '% Change in Consumer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_cons_surplus_change.png'))
+        # Price Change
+        ggplot(data = filter(data, Crop == crop_selected, Type == type_selected),
+               aes(x = Year, y = Percent_Price_Change)) +
+            geom_line(aes(color = Country), size = 1.25) +
+            scale_y_continuous(labels=percent, breaks = seq(-0.5,1,by = .25)) +
+            scale_x_continuous(breaks = seq(1,30,by=1)) +
+            labs(title = paste(crop_selected, type_selected, sep = ' - '),
+               subtitle = 'Change in Price over Time',
+               y = '% Difference in Price from Baseline') +
+            theme_custom()
 
 
-### Soybean
+        ggsave(paste0(folder, 'graphs/R/', crop_selected, '_',
+                      type_selected, 'price_change.png'))
 
-crop_selected <- 'soybean'
+        # Quantity Change
+        ggplot(data = filter(data, Crop == crop_selected, Type == type_selected),
+               aes(x = Year, y = Percent_Quantity_Change)) +
+            geom_line(aes(color = Country), size = 1.25) +
+            scale_y_continuous(labels=percent, breaks = seq(-0.5,1,by = .05)) +
+            scale_x_continuous(breaks = seq(1,30,by=1)) +
+            labs(title = paste(crop_selected, type_selected, sep = ' - '),
+                 subtitle = '% Change in Quantity over Time',
+                 y = '% Change in Quantity from Baseline') +
+            theme_custom()
 
-## Price Change
+        ggsave(paste0(folder, 'graphs/R/', crop_selected, '_',
+                      type_selected, '_quantity_change.png'))
 
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Price_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Multimarket', subtitle = '% Change in Price over Time',
-       y = '% Change in Price')
+    }
+}
+
+## Aggregate Graphs
+
+# Aggregate
+data_agg <- data %>%
+    group_by(Country, Year, Type) %>%
+    summarize_at(vars(-Crop), sum)
+
+# Recompute percent change in surplus
+data_agg$Percent_Change_in_Consumer_Surplus <-
+    data_agg$Change_in_Consumer_Surplus / data_agg$Consumer_Surplus_Original
+data_agg$Percent_Change_in_Producer_Surplus <-
+    data_agg$Change_in_Producer_Surplus / data_agg$Producer_Surplus_Original
+
+for (type_selected in unique(data_agg$Type)) {
+
+    # Producer Surplus  Change
+    ggplot(data = filter(data_agg, Type == type_selected),
+           aes(x = Year, y = Percent_Change_in_Producer_Surplus)) +
+        geom_line(aes(color = Country), size = 1.25) +
+        scale_y_continuous(labels=percent) +
+        scale_x_continuous(breaks = seq(0,30,by=1)) +
+        labs(title = paste('All Crops', type_selected, sep = ' - '),
+           subtitle = '% Change in Producer Surplus over Time',
+           y = '% Difference in Surplus from Baseline') +
+        theme_custom()
+
+    ggsave(paste0(folder, 'graphs/R/', 'All', '_',
+                  type_selected, '_prod_surplus_change.png'))
+
+    # Producer Surplus  Change
+    ggplot(data = filter(data_agg, Type == type_selected),
+           aes(x = Year, y = Percent_Change_in_Consumer_Surplus)) +
+        geom_line(aes(color = Country), size = 1.25) +
+        scale_y_continuous(labels=scales::percent, breaks = seq(-0.2,.1,by = .05)) +
+        scale_x_continuous(breaks = seq(0,30,by=1)) +
+        labs(title = paste('All Crops', type_selected, sep = ' - '),
+             subtitle = '% Change in Consumer Surplus over Time',
+             y = '% Difference in Surplus from Baseline') +
+        theme_custom()
+
+    ggsave(paste0(folder, 'graphs/R/', 'All', '_',
+                  type_selected, '_prod_Consumer_change.png'))
+
+}
 
 
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_price_change.png'))
-
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Price_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Partial Eq', subtitle = '% Change in Price over Time',
-       y = '% Change in Price')  
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_price_change.png'))
-
-## Quantity Change
-
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Quantity_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .02)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Multimarket', subtitle = '% Change in Quantity over Time',
-       y = '% Change in Quantity')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_quantity_change.png'))
-
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Quantity_Change)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .02)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Partial Eq', subtitle = '% Change in Quantity over Time',
-       y = '% Change in Quantity')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_quantity_change.png'))
-
-## Producer Surplus  Change
-
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Producer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Multimarket', 
-       subtitle = '% Change in Producer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_prod_surplus_change.png'))
-
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Producer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .1)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Partial Eq', 
-       subtitle = '% Change in Producer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_prod_surplus_change.png'))
-
-## Consumer Surplus  Change
-
-# Multimarket
-ggplot(data = filter(data_mm, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Consumer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .25)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Multimarket', 
-       subtitle = '% Change in Consumer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_cons_surplus_change.png'))
-
-# Partial Eq
-ggplot(data = filter(data_pe, Crop == crop_selected), 
-       aes(x = Year, y = Percent_Change_in_Consumer_Surplus)) + 
-  geom_line(aes(color = Country), size = 1.25) + 
-  scale_y_continuous(labels=percent, breaks = seq(-1,1,by = .05)) +
-  scale_x_continuous(breaks = seq(0,10,by=1)) +
-  labs(title = 'Soybean - Partial Eq', 
-       subtitle = '% Change in Consumer Surplus over Time',
-       y = '% Change in Surplus')
-
-ggsave(paste0(folder, 'graphs/R/', crop_selected, '_cons_surplus_change.png'))

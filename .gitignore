@@ -13,3 +13,5 @@
 *.spl
 *.synctex.gz
 
+# R history files
+*.Rhistory

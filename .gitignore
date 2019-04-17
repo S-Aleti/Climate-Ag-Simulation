@@ -15,3 +15,6 @@
 
 # R history files
 *.Rhistory
+
+# Notebook checkpoints
+main/.ipynb_checkpoints/

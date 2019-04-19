@@ -1,5 +1,5 @@
 % ========================================================================
-% This script analyzes the 31 counterfactual shocks 
+% This script analyzes a given set of shocks
 % ========================================================================
 
 %% Params

@@ -8,14 +8,13 @@
 scenarios_xlsx_file = '/crop_data/xlsx_data/CLM5_Country_Shock_Ave.xlsx';
 
 % results file loc
-results_file = 'results/csv/results_CLM5_pe.csv';
+results_file = 'results/csv/results_CLM5_mm.csv';
 
 % elasticities: use CGE elasticity 
-epq_data(:,7) = {-0.808};
 elas_S_corn_soybean = 0;
 elas_S_soybean_corn = 0;
-elas_D_corn_soybean = -0%.808;
-elas_D_soybean_corn = -0%.808;
+elas_D_corn_soybean = 0.808;
+elas_D_soybean_corn = 0.808;
 
 
 %% Collect Data
@@ -23,7 +22,7 @@ elas_D_soybean_corn = -0%.808;
 % change arg to 'recollect' to recollect the data, or just use 'load' to
 % use the previously collected data (faster)
 [ elas_data, pq_data, epq_data, cf_data ] = collectData( 'load' );
-
+epq_data(:,7) = {-0.808};
 
 %% Update counterfactual data with scenarios
 
@@ -93,8 +92,8 @@ cf_data = cf_data(ind, :);
 %% Get results
 
 [ results_mat, formatted_results, ~ ]  = analyzeShocksCross(epq_data,   ...
-    cf_data, 1, elas_S_corn_soybean,                                    ...
-    elas_S_soybean_corn, elas_D_corn_soybean, elas_D_soybean_corn);
+    cf_data, 1, elas_S_corn_soybean, elas_S_soybean_corn,               ...
+    elas_D_corn_soybean, elas_D_soybean_corn);
 
 
 %% Export results to csv
@@ -110,7 +109,7 @@ var_names = {'Year', 'Country', 'Crop', 'Percent_Price_Change',         ...
     'Percent_Change_in_Producer_Surplus',                               ...
     'Percent_Change_in_Consumer_Surplus',                               ...
     'Producer_Surplus_Original',                                        ...
-    'Consumer_Surplus_Original'};
+    'Consumer_Surplus_Original', 'Quantity_Original'};
 
 results_table.Properties.VariableNames = var_names;
 

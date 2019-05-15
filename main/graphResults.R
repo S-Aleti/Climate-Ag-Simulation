@@ -12,9 +12,10 @@ capitalize <- function(s) {
 
 theme_custom <- function() {
     (theme_foundation(base_size=12) +
-         theme(plot.title = element_text(face = "bold",
-                                         size = rel(1.2), hjust = 0.5),
-               plot.subtitle = element_text(size = rel(1.2), hjust = 0.5),
+         theme(plot.title = element_text(face = "bold", size = rel(0),
+                                         color = 'white', hjust = 0.5),
+               plot.subtitle = element_text(size = rel(0), color = 'white',
+                                            hjust = 0.5),
                text = element_text(),
                panel.background = element_rect(colour = NA),
                plot.background = element_rect(colour = NA),
@@ -49,7 +50,7 @@ data_raw <- rbind(data_mm, data_pe)
 
 # Clean data frame
 data <- filter(data_raw, Country %in%
-                  c('India', 'United States', 'China', 'Brazil'),
+                  c( 'United States', 'China', 'Brazil'),
                Crop %in% c('corn', 'soybean'))
 data <- data %>%
         mutate(Crop = capitalize(Crop))

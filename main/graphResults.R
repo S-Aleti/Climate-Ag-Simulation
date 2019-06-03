@@ -30,10 +30,17 @@ theme_custom <- function() {
                panel.grid.minor = element_blank(),
                legend.key = element_rect(colour = NA),
                legend.title = element_text(face="italic"),
+               legend.position = "bottom",
                strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
                strip.text = element_text(face="bold"))
      )
 }
+
+# Params
+
+country_subset <- c( 'United States', 'China', 'Brazil')
+plot_width  <- 8
+plot_height <- 5
 
 ### Import Data
 
@@ -50,7 +57,7 @@ data_raw <- rbind(data_mm, data_pe)
 
 # Clean data frame
 data <- filter(data_raw, Country %in%
-                  c( 'United States', 'China', 'Brazil'),
+                   country_subset,
                Crop %in% c('corn', 'soybean'))
 data <- data %>%
         mutate(Crop = capitalize(Crop))
@@ -74,7 +81,8 @@ for (crop_selected in unique(data$Crop)) {
 
 
         ggsave(paste0(folder, 'graphs/R/', crop_selected, '_',
-                      type_selected, 'price_change.png'))
+                      type_selected, '_price_change.png'),
+               width = plot_width, height = plot_height)
 
         # Quantity Change
         ggplot(data = filter(data, Crop == crop_selected, Type == type_selected),
@@ -88,7 +96,8 @@ for (crop_selected in unique(data$Crop)) {
             theme_custom()
 
         ggsave(paste0(folder, 'graphs/R/', crop_selected, '_',
-                      type_selected, '_quantity_change.png'))
+                      type_selected, '_quantity_change.png'),
+               width = plot_width, height = plot_height)
 
     }
 }
@@ -120,7 +129,8 @@ for (type_selected in unique(data_agg$Type)) {
         theme_custom()
 
     ggsave(paste0(folder, 'graphs/R/', 'All', '_',
-                  type_selected, '_prod_surplus_change.png'))
+                  type_selected, '_prod_surplus_change.png'),
+           width = plot_width, height = plot_height)
 
     # Consumer Surplus  Change
     ggplot(data = filter(data_agg, Type == type_selected),
@@ -134,20 +144,20 @@ for (type_selected in unique(data_agg$Type)) {
         theme_custom()
 
     ggsave(paste0(folder, 'graphs/R/', 'All', '_',
-                  type_selected, '_prod_Consumer_change.png'))
+                  type_selected, '_prod_Consumer_change.png'),
+           width = plot_width, height = plot_height)
 
 }
 
 ## Find total change in calories for all countries
-data <- data_raw
 
 # Convert quantities in units of calories (1 MT = 1,000,000,000,000)
 data$Calories_Original = 0
 
-data[data$Crop == 'corn', 'Calories_Original'] <-
-    data[data$Crop == 'corn', 'Quantity_Original']*(98/100)*(10e12)
-data[data$Crop == 'soybean', 'Calories_Original'] <-
-    data[data$Crop == 'soybean', 'Quantity_Original']*(147/100)*(10e12)
+data[data$Crop == 'Corn', 'Calories_Original'] <-
+    data[data$Crop == 'Corn', 'Quantity_Original']*(98/100)*(10e12)
+data[data$Crop == 'Soybean', 'Calories_Original'] <-
+    data[data$Crop == 'Soybean', 'Quantity_Original']*(147/100)*(10e12)
 
 data$Calories_Produced <- (data$Calories_Original *
                                (1+data$Percent_Quantity_Change))
@@ -155,8 +165,7 @@ data$Calories_Produced <- (data$Calories_Original *
 # Aggregate for our four countries
 data_agg <- data %>%
     group_by(Country, Year, Type) %>%
-    summarize_at(vars(-Crop), sum) %>%
-    filter(Country %in% c('India', 'United States', 'China', 'Brazil'))
+    summarize_at(vars(-Crop), sum)
 
 # Compute percent change in calories
 data_agg$Percent_Calorie_Change <- (data_agg$Calories_Produced
@@ -177,12 +186,13 @@ for (type_selected in unique(data_agg$Type)) {
         theme_custom()
 
     ggsave(paste0(folder, 'graphs/R/', 'All', '_',
-                  type_selected, '_country_calorie_change.png'))
+                  type_selected, '_country_calorie_change.png'),
+           width = plot_width, height = plot_height)
 
 
 }
 
-# Aggregate
+# Aggregate across all countries and crops
 data_agg <- data %>%
     group_by(Year, Type) %>%
     summarize_at(vars(-Crop, -Country), sum)
@@ -203,7 +213,42 @@ ggplot(data = filter(data_agg),
          y = '% Difference in Calories from Baseline') +
     theme_custom()
 
-ggsave(paste0(folder, 'graphs/R/', 'All_total_calorie_change.png'))
+ggsave(paste0(folder, 'graphs/R/', 'All_total_calorie_change.png'),
+       width = 8, height = 4)
+
+# Get quantity in each period
+data['Quantity'] <- data['Quantity_Original']*
+    (1+data['Percent_Quantity_Change'])
+
+# Aggregate across all countries
+data_agg <- data %>%
+    group_by(Year, Type, Crop) %>%
+    summarize_at(vars(-Country), sum)
+
+# Compute percent change in calories
+data_agg$Percent_Quantity_Change <- (data_agg$Quantity
+                                     /data_agg$Quantity_Original) - 1
+
+# Change in crop production for all countries, each crop, showing both types
+for (crop_selected in unique(data$Crop)) {
+
+    # Price Change
+    ggplot(data = filter(data_agg, Crop == crop_selected),
+           aes(x = Year, y = Percent_Quantity_Change)) +
+        geom_line(aes(color = Type), size = 1.25) +
+        scale_y_continuous(labels=percent) +
+        scale_x_continuous(breaks = seq(1,30,by=1)) +
+        scale_color_discrete(guide = guide_legend()) +
+        labs(title = paste(crop_selected, 'All Countries', sep = ' - '),
+             subtitle = 'Change in Price over Time',
+             y = '% Difference in Quantity from Baseline') +
+        theme_custom()
+
+
+    ggsave(paste0(folder, 'graphs/R/', crop_selected, '_',
+                  'all_countries_', 'quantity_change.png'),
+           width = plot_width, height = plot_height)
+}
 
 
 

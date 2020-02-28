@@ -56,8 +56,8 @@ data_pe$Type <- 'Partial Equilibrium'
 data_raw <- rbind(data_mm, data_pe)
 
 # Clean data frame
-data <- filter(data_raw, Country %in%
-                   country_subset,
+data <- filter(data_raw, Country %in% country_subset,
+               Year %in% c(1:15),
                Crop %in% c('corn', 'soybean'))
 data <- data %>%
         mutate(Crop = capitalize(Crop))

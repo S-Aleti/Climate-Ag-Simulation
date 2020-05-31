@@ -22,7 +22,7 @@ elas_D_soybean_corn = 0%.808;
 % change arg to 'recollect' to recollect the data, or just use 'load' to
 % use the previously collected data (faster)
 % for recollection, use: collectData( 'recollect', 'crop_data/xlsx_data/' )
-[ elas_data, pq_data, epq_data, cf_data ] = collectData( 'load' );
+[ elas_data, pq_data, epq_data, cf_data ] = collectData( 'recollect', 'crop_data/xlsx_data/' );
 %epq_data(:,7) = {-0.808};
 
 %% Update counterfactual data with scenarios

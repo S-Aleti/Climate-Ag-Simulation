@@ -29,7 +29,7 @@ elseif (isequal(arg,'recollect'))
 
     disp('Collecting elasticity data...')
 
-    file_name = [data_folder '/Elasticity_Data.xlsx'];
+    file_name = [data_folder '/Elasticity_Data_New.xlsx'];
     elas_data = collectElasticityData(file_name, 1, 2, 3, 4, 6, 7);
 
 

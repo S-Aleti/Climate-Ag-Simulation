@@ -1,11 +1,11 @@
-function [ filtered_data ] = findEPQ(data, id_code, commodity, year)
+function [ filtered_data ] = findEPQ(data, country, commodity, year)
 
-% FINDELASTICITY Searches cell array for the elasticity of a 
+% FINDEPQ Searches cell array for the elasticity of a 
 % commodity at a given location
 % ========================================================================
 % INPUT ARGUMENTS:
 %   data                 (cell array) from collectAllData.m
-%   id_code              (int)        country identification code
+%   country              (string)     country name
 %   commodity            (string)     commodity name, use 'all' for all
 %   year                 (int/string) year of data, 'latest' for latest
 % ========================================================================
@@ -16,7 +16,7 @@ function [ filtered_data ] = findEPQ(data, id_code, commodity, year)
 
 %% Filter by country
 
-if isequal(id_code,'all') 
+if isequal(country,'all') 
 
     data_country = data;
     
@@ -28,7 +28,7 @@ else % looking for a specific country
     for i = 1:size(data,1)
 
         %check country code 
-        if isequal(data(i,1),{id_code})
+        if isequal(data(i,2),{country})
             data_country = [data_country; data(i,:)];
         end
 
@@ -83,7 +83,7 @@ end
 
 %% Output
 
-filtered_data = data_year;
+filtered_data = data_year(1,:);
 
 end
 

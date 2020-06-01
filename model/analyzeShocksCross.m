@@ -47,7 +47,7 @@ for i = 1:size(cf_data,1)
     commodity  = cf_data{i,3};
     
     % find latest corresponding elasticity, price, and quantity 
-    epq = findEPQ(epq_data, country_id, commodity, 'latest');
+    epq = findEPQ(epq_data, country, commodity, 'latest');
     
     % skip iteration if no data
     if isempty(epq)
@@ -91,11 +91,11 @@ data_quantities = zeros(m, 1);
 for i = 1:num_countrycrop
     
     % get country and commodity
-    country_id = filtered_data{i,1};
+    country    = filtered_data{i,2};
     commodity  = filtered_data{i,3};
     
     % find elasticities, price, and quantity
-    epq = findEPQ(epq_data, country_id, commodity, 'latest');
+    epq = findEPQ(epq_data, country, commodity, 'latest');
     elas_D   = epq{7}; % demand_ownprice
     elas_S   = epq{11}; 
     price    = epq{5};

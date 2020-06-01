@@ -1,8 +1,10 @@
 library(tidyverse)
+library(readxl)
 library(ggplot2)
 library(scales)
 library(grid)
 library(ggthemes)
+
 
 ### Functions
 
@@ -47,8 +49,21 @@ plot_height <- 5
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 folder <- '../results/'
 
-data_mm <- read_csv(paste(folder, 'csv/results_CLM5_mm.csv', sep = ''))
-data_pe <- read_csv(paste(folder, 'csv/results_CLM5_pe.csv', sep = ''))
+data_mm <- read_csv(paste(folder, 'csv/results_05302020_mm.csv', sep = ''))
+data_pe <- read_csv(paste(folder, 'csv/results_05302020_pe.csv', sep = ''))
+data_cm <- rbind(
+    read_excel('../crop_data/xlsx_data/B_C_US_shocks_c_s.xlsx', sheet = 1)
+    %>% mutate(Crop = 'Corn'),
+    read_excel('../crop_data/xlsx_data/B_C_US_shocks_c_s.xlsx', sheet = 2)
+    %>% mutate(Crop = 'Soybean'))
+
+# Clean up cm data
+data_cm[2] <- NULL
+data_cm <- gather(data_cm, colnames(data_cm)[2:16], key = 'Year',
+                  value = 'Percent_Quantity_Change')
+colnames(data_cm)[1] <- 'Country'
+data_cm['Type'] <- 'Crop Model'
+data_cm <- data_cm %>% mutate(Year = as.numeric(Year))
 
 # Merge data
 data_mm$Type <- 'Multimarket'
@@ -57,7 +72,6 @@ data_raw <- rbind(data_mm, data_pe)
 
 # Clean data frame
 data <- filter(data_raw, Country %in% country_subset,
-               Year %in% c(1:15),
                Crop %in% c('corn', 'soybean'))
 data <- data %>%
         mutate(Crop = capitalize(Crop))
@@ -125,11 +139,11 @@ for (type_selected in unique(data_agg$Type)) {
         scale_x_continuous(breaks = seq(0,30,by=1)) +
         labs(title = paste('All Crops', type_selected, sep = ' - '),
            subtitle = '% Change in Producer Surplus over Time',
-           y = '% Difference in Surplus from Baseline') +
+           y = '% Difference in Producer Surplus from Baseline') +
         theme_custom()
 
     ggsave(paste0(folder, 'graphs/R/', 'All', '_',
-                  type_selected, '_prod_surplus_change.png'),
+                  type_selected, '_producer_surplus_change.png'),
            width = plot_width, height = plot_height)
 
     # Consumer Surplus  Change
@@ -140,11 +154,11 @@ for (type_selected in unique(data_agg$Type)) {
         scale_x_continuous(breaks = seq(0,30,by=1)) +
         labs(title = paste('All Crops', type_selected, sep = ' - '),
              subtitle = '% Change in Consumer Surplus over Time',
-             y = '% Difference in Surplus from Baseline') +
+             y = '% Difference in Consumer Surplus from Baseline') +
         theme_custom()
 
     ggsave(paste0(folder, 'graphs/R/', 'All', '_',
-                  type_selected, '_prod_Consumer_change.png'),
+                  type_selected, '_consumer_surplus_change.png'),
            width = plot_width, height = plot_height)
 
 }
@@ -162,7 +176,7 @@ data[data$Crop == 'Soybean', 'Calories_Original'] <-
 data$Calories_Produced <- (data$Calories_Original *
                                (1+data$Percent_Quantity_Change))
 
-# Aggregate for our four countries
+# Aggregate by country year type
 data_agg <- data %>%
     group_by(Country, Year, Type) %>%
     summarize_at(vars(-Crop), sum)
@@ -171,7 +185,7 @@ data_agg <- data %>%
 data_agg$Percent_Calorie_Change <- (data_agg$Calories_Produced
                                     /data_agg$Calories_Original) - 1
 
-
+# For each type
 for (type_selected in unique(data_agg$Type)) {
 
     # Change in calories
@@ -191,6 +205,26 @@ for (type_selected in unique(data_agg$Type)) {
 
 
 }
+
+# For both types
+ggplot(data = filter(data_agg),
+       aes(x = Year, y = Percent_Calorie_Change,
+           group = interaction(Country, Type))) +
+    geom_line(aes(color = Country), size = 1) +
+    geom_point(aes(shape = Type, color = Country), size = 2) +
+    scale_y_continuous(labels=percent) +
+    scale_x_continuous(breaks = seq(0,30,by=1)) +
+    labs(title = paste('All Crops', type_selected, sep = ' - '),
+         subtitle = '% Change in Calories over Time',
+         y = '% Difference in Calories from Baseline') +
+    theme_custom() +
+    guides(color = guide_legend(title.position="top", title.hjust = 0.5),
+           shape = guide_legend(title.position="top", title.hjust = 0.5))
+
+ggsave(paste0(folder, 'graphs/R/', 'All', '_',
+              'PEMM', '_country_calorie_change.png'),
+       width = plot_width, height = plot_height)
+
 
 # Aggregate across all countries and crops
 data_agg <- data %>%
@@ -216,6 +250,8 @@ ggplot(data = filter(data_agg),
 ggsave(paste0(folder, 'graphs/R/', 'All_total_calorie_change.png'),
        width = 8, height = 4)
 
+## Quantity changes with all shock types
+
 # Get quantity in each period
 data['Quantity'] <- data['Quantity_Original']*
     (1+data['Percent_Quantity_Change'])
@@ -229,26 +265,56 @@ data_agg <- data %>%
 data_agg$Percent_Quantity_Change <- (data_agg$Quantity
                                      /data_agg$Quantity_Original) - 1
 
-# Change in crop production for all countries, each crop, showing both types
+# # Change in crop production for all countries, each crop, showing both types
+# for (crop_selected in unique(data$Crop)) {
+#
+#     # Price Change
+#     ggplot(data = filter(data_agg, Crop == crop_selected),
+#            aes(x = Year, y = Percent_Quantity_Change)) +
+#         geom_line(aes(color = Type), size = 1.25) +
+#         scale_y_continuous(labels=percent) +
+#         scale_x_continuous(breaks = seq(1,30,by=1)) +
+#         scale_color_discrete(guide = guide_legend()) +
+#         labs(title = paste(crop_selected, 'All Countries', sep = ' - '),
+#              subtitle = 'Change in Price over Time',
+#              y = '% Difference in Quantity from Baseline') +
+#         theme_custom()
+#
+#
+#     ggsave(paste0(folder, 'graphs/R/', crop_selected, '_',
+#                   'all_countries_', 'quantity_change.png'),
+#            width = plot_width, height = plot_height)
+# }
+
+# Merge data from all three models
+data_alltypes <- rbind(
+    data[,c('Type', 'Country', 'Crop', 'Year', 'Percent_Quantity_Change')],
+    data_cm)
+data_alltypes <- filter(data_alltypes, Country %in% country_subset,
+                        Crop %in% c('Corn', 'Soybean'))
+
+# Change in crop production for all countries, each crop, showing all types
 for (crop_selected in unique(data$Crop)) {
 
     # Price Change
-    ggplot(data = filter(data_agg, Crop == crop_selected),
-           aes(x = Year, y = Percent_Quantity_Change)) +
-        geom_line(aes(color = Type), size = 1.25) +
-        scale_y_continuous(labels=percent) +
+    ggplot(data = filter(data_alltypes, Crop == crop_selected),
+           aes(x = Year, y = Percent_Quantity_Change,
+               group = interaction(Country, Type))) +
+        geom_line(aes(color = Country), size = 1) +
+        geom_point(aes(shape = Type, color = Country), size = 2) +
+        scale_y_continuous(labels = percent) +
         scale_x_continuous(breaks = seq(1,30,by=1)) +
-        scale_color_discrete(guide = guide_legend()) +
-        labs(title = paste(crop_selected, 'All Countries', sep = ' - '),
-             subtitle = 'Change in Price over Time',
+        #scale_linetype_manual(values = c(rep('solid'), rep('longdash'), rep('dotted')))
+        labs(title = paste(crop_selected, type_selected, sep = ' - '),
+             subtitle = 'Change in Quantity over Time',
              y = '% Difference in Quantity from Baseline') +
-        theme_custom()
+        theme_custom() +
+        guides(color = guide_legend(title.position="top", title.hjust = 0.5),
+               shape = guide_legend(title.position="top", title.hjust = 0.5))
 
 
-    ggsave(paste0(folder, 'graphs/R/', crop_selected, '_',
-                  'all_countries_', 'quantity_change.png'),
+    ggsave(paste0(folder, 'graphs/R/', crop_selected, '_all_countries_',
+                  'quantity_change.png'),
            width = plot_width, height = plot_height)
+
 }
-
-
-

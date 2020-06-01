@@ -40,7 +40,7 @@ for i = 1:size(cf_data,1)
     entry(1:3) = {country_id, country, commodity};
     
     % find latest corresponding elasticity, price, and quantity 
-    epq = findEPQ(epq_data, country_id, commodity, 'latest');
+    epq = findEPQ(epq_data, country, commodity, 'latest');
     
     % skip iteration if no data
     if isempty(epq)

@@ -11,10 +11,10 @@ scenarios_xlsx_file = '/crop_data/xlsx_data/B_C_US_shocks_c_s.xlsx';
 results_file = 'results/csv/results_05302020_pe.csv';
 
 % elasticities: use CGE elasticity 
-elas_S_corn_soybean = 0;
-elas_S_soybean_corn = 0;
-elas_D_corn_soybean = 0%.808;
-elas_D_soybean_corn = 0%.808;
+elas_S_corn_soybean = -0%.076; 
+elas_S_soybean_corn = -0%.13; 
+elas_D_corn_soybean = 0%.123; 
+elas_D_soybean_corn = 0%.15;
 
 
 %% Collect Data

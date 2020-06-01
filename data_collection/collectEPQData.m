@@ -35,11 +35,11 @@ for i = 1:size(pq_data,1)
     quantity     = cell2mat(pq_data(i,6));
     
     % from elasticity data
-    demand_O = findElasticity(elas_data, c_code, commodity, 'demand_O');
-    demand_C = findElasticity(elas_data, c_code, commodity, 'demand_C');
-    demand_I = findElasticity(elas_data, c_code, commodity, 'demand_I');
-    demand_E = findElasticity(elas_data, c_code, commodity, 'demand_E');
-    supply   = findElasticity(elas_data, c_code, commodity, 'supply');
+    demand_O = findElasticity(elas_data, country, commodity, 'demand_O');
+    demand_C = findElasticity(elas_data, country, commodity, 'demand_C');
+    demand_I = findElasticity(elas_data, country, commodity, 'demand_I');
+    demand_E = findElasticity(elas_data, country, commodity, 'demand_E');
+    supply   = findElasticity(elas_data, country, commodity, 'supply');
 
     if (~isempty(supply) && ~( isempty(demand_O) && isempty(demand_C) ...
                             && isempty(demand_I) && isempty(demand_E) ) )

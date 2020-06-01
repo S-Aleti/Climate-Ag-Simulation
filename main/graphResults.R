@@ -4,6 +4,7 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(ggthemes)
+library(lemon)
 
 
 ### Functions
@@ -15,25 +16,25 @@ capitalize <- function(s) {
 theme_custom <- function() {
     (theme_foundation(base_size=12) +
          theme(plot.title = element_text(face = "bold", size = rel(0),
-                                         color = 'white', hjust = 0.5),
-               plot.subtitle = element_text(size = rel(0), color = 'white',
+                                         hjust = 0.5),
+               plot.subtitle = element_text(size = rel(0),
                                             hjust = 0.5),
                text = element_text(),
-               panel.background = element_rect(colour = NA),
-               plot.background = element_rect(colour = NA),
-               panel.border = element_rect(colour = NA),
-               axis.title = element_text(face = "bold",size = rel(1)),
-               axis.title.y = element_text(angle=90,vjust =2),
+               panel.background = element_rect(color = NA),
+               plot.background = element_rect(color = NA),
+               panel.border = element_rect(color = NA),
+               axis.title = element_text(face = "bold", size = rel(1)),
+               axis.title.y = element_text(angle = 90, vjust = 2),
                axis.title.x = element_text(vjust = -0.2),
                axis.text = element_text(),
-               axis.line = element_line(colour="black"),
+               axis.line = element_line(color="black"),
                axis.ticks = element_line(),
-               panel.grid.major = element_line(colour="#f0f0f0"),
+               panel.grid.major = element_line(color="#f0f0f0"),
                panel.grid.minor = element_blank(),
-               legend.key = element_rect(colour = NA),
+               legend.key = element_rect(color = NA),
                legend.title = element_text(face="italic"),
                legend.position = "bottom",
-               strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+               strip.background = element_rect(color="#f0f0f0",fill="#f0f0f0"),
                strip.text = element_text(face="bold"))
      )
 }
@@ -293,28 +294,65 @@ data_alltypes <- rbind(
 data_alltypes <- filter(data_alltypes, Country %in% country_subset,
                         Crop %in% c('Corn', 'Soybean'))
 
+# Color dict
+country_colors <- c('#F8766D', '#00BA38', '#619CFF')
+names(country_colors) <-  c('Brazil', 'China', 'United States')
+
 # Change in crop production for all countries, each crop, showing all types
 for (crop_selected in unique(data$Crop)) {
-
-    # Price Change
-    ggplot(data = filter(data_alltypes, Crop == crop_selected),
-           aes(x = Year, y = Percent_Quantity_Change,
-               group = interaction(Country, Type))) +
-        geom_line(aes(color = Country), size = 1) +
-        geom_point(aes(shape = Type, color = Country), size = 2) +
-        scale_y_continuous(labels = percent) +
-        scale_x_continuous(breaks = seq(1,30,by=1)) +
-        #scale_linetype_manual(values = c(rep('solid'), rep('longdash'), rep('dotted')))
-        labs(title = paste(crop_selected, type_selected, sep = ' - '),
-             subtitle = 'Change in Quantity over Time',
-             y = '% Difference in Quantity from Baseline') +
-        theme_custom() +
-        guides(color = guide_legend(title.position="top", title.hjust = 0.5),
-               shape = guide_legend(title.position="top", title.hjust = 0.5))
+    for (country_selected in unique(data$Country)) {
 
 
-    ggsave(paste0(folder, 'graphs/R/', crop_selected, '_all_countries_',
-                  'quantity_change.png'),
-           width = plot_width, height = plot_height)
+        # Quantity Change
+        ggplot(data = filter(data_alltypes, Crop == crop_selected,
+                             Country == country_selected),
+               aes(x = Year, y = Percent_Quantity_Change,
+                   group = Type)) +
+            geom_line(color = country_colors[country_selected], size = 1) +
+            geom_point(aes(shape = Type),
+                       color = country_colors[country_selected], size = 2) +
+            scale_y_continuous(labels = percent) +
+            scale_x_continuous(breaks = seq(1,30,by=1)) +
+            #scale_linetype_manual(values = c(rep('solid'), rep('longdash'), rep('dotted')))
+            labs(title = paste(crop_selected, country_selected, sep = ' - '),
+                 subtitle = 'Change in Quantity over Time',
+                 y = '% Difference in Quantity from Baseline') +
+            theme_custom() +
+            theme(plot.title = element_text(size = rel(1)),
+                  plot.subtitle = element_text(size = rel(1)))
 
+
+        ggsave(paste0(folder, 'graphs/R/', crop_selected, '_', country_selected,
+                      '_alltypes_quantity_change.png'),
+               width = plot_width, height = plot_height)
+
+    }
 }
+
+
+# Facetted version
+ggplot(data = filter(data_alltypes) %>% mutate(Year = Year+2019),
+       aes(x = Year, y = Percent_Quantity_Change, color = Country,
+           group = Type)) +
+    geom_line(size = 0.7) +
+    geom_point(aes(shape = Type), size = 2) +
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1L)) +
+    scale_x_continuous(breaks = seq(2020,2020+15,by=2)) +
+    #scale_linetype_manual(values = c(rep('solid'), rep('longdash'), rep('dotted')))
+    labs(title = '',
+         subtitle = '',
+         y = '% Difference in Quantity from Baseline') +
+    theme_custom() +
+    theme(strip.background = element_rect(color=NA,fill="#f5f5f5"),
+          axis.title.x = element_text(vjust = -3),
+          # panel.background = element_rect(color = 'black'),
+          # plot.background = element_rect(color = 'black'),
+          panel.border = element_rect(color = 'black'),
+          axis.line = element_line(color=NA)) +
+    facet_grid(Country ~ Crop) +
+    guides(color = FALSE)
+
+ggsave(paste0(folder, 'graphs/R/', 'all_facet_quantity_change.png'),
+       width = plot_width*1.25, height = plot_height*1.25)
+
+

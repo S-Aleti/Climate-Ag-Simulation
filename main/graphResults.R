@@ -15,10 +15,8 @@ capitalize <- function(s) {
 
 theme_custom <- function() {
     (theme_foundation(base_size=12) +
-         theme(plot.title = element_text(face = "bold", size = rel(0),
-                                         hjust = 0.5),
-               plot.subtitle = element_text(size = rel(0),
-                                            hjust = 0.5),
+         theme(plot.title = element_text(face = "bold",  hjust = 0.5),
+               plot.subtitle = element_text(hjust = 0.5),
                text = element_text(),
                panel.background = element_rect(color = NA),
                plot.background = element_rect(color = NA),
@@ -215,7 +213,7 @@ ggplot(data = filter(data_agg),
     geom_point(aes(shape = Type, color = Country), size = 2) +
     scale_y_continuous(labels=percent) +
     scale_x_continuous(breaks = seq(0,30,by=1)) +
-    labs(title = paste('All Crops', type_selected, sep = ' - '),
+    labs(title = 'All Crops - All Countries',
          subtitle = '% Change in Calories over Time',
          y = '% Difference in Calories from Baseline') +
     theme_custom() +
@@ -243,7 +241,7 @@ ggplot(data = filter(data_agg),
     geom_line(size = 1.25) +
     scale_y_continuous(labels=percent) +
     scale_x_continuous(breaks = seq(0,30,by=1)) +
-    labs(title = paste('All Crops', type_selected, sep = ' - '),
+    labs(title = paste('All Crops - All Countries'),
          subtitle = '% Change in Calories over Time',
          y = '% Difference in Calories from Baseline') +
     theme_custom()
@@ -331,7 +329,7 @@ for (crop_selected in unique(data$Crop)) {
 
 
 # Facetted version
-ggplot(data = filter(data_alltypes) %>% mutate(Year = Year+2019),
+ggplot(data = filter(data_alltypes, Type != 'Multimarket') %>% mutate(Year = Year+2019),
        aes(x = Year, y = Percent_Quantity_Change, color = Country,
            group = Type)) +
     geom_line(size = 0.7) +

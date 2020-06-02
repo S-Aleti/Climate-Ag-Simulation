@@ -8,13 +8,13 @@
 scenarios_xlsx_file = '/crop_data/xlsx_data/B_C_US_shocks_c_s.xlsx';
 
 % results file loc
-results_file = 'results/csv/results_05302020_pe.csv';
+results_file = 'results/csv/results_05302020_pe_clm5e.csv';
 
 % elasticities: use CGE elasticity 
 elas_S_corn_soybean = -0%.076; 
 elas_S_soybean_corn = -0%.13; 
-elas_D_corn_soybean = 0%.123; 
-elas_D_soybean_corn = 0%.15;
+elas_D_corn_soybean = 0%.808; 
+elas_D_soybean_corn = 0%.808;
 
 
 %% Collect Data
@@ -23,7 +23,7 @@ elas_D_soybean_corn = 0%.15;
 % use the previously collected data (faster)
 % for recollection, use: collectData( 'recollect', 'crop_data/xlsx_data/' )
 [ elas_data, pq_data, epq_data, cf_data ] = collectData( 'recollect', 'crop_data/xlsx_data/' );
-%epq_data(:,7) = {-0.808};
+epq_data(:,7) = {-0.808};
 
 %% Update counterfactual data with scenarios
 
@@ -92,6 +92,10 @@ end
 ind = ~cellfun(@isempty, cf_data(:,size(cf_data,2)));
 cf_data = cf_data(ind, :);
 
+% % Drop rows not in country list
+% f = @(x) any(strcmp({'Brazil', 'China', 'United States'}, x))
+% ind = cellfun(f, cf_data(:,2));
+% cf_data = cf_data(ind,:);
 
 %% Get results
 

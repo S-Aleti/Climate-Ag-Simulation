@@ -4,7 +4,6 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(ggthemes)
-library(lemon)
 library(RColorBrewer)
 
 
@@ -66,12 +65,12 @@ data_pe_baseline <- read_csv(paste(folder, 'csv/results_BCUS_pe_baseline.csv',
                              sep = ''))
 
 # Merge pe data
-data_pe <- rbind(data_pe_ld %>% mutate(Scenario = 'Demand Elasticity -20%'),
-      data_pe_ud %>% mutate(Scenario = 'Demand Elasticity +20%'),
-      data_pe_ls %>% mutate(Scenario = 'Supply Elasticity -20%'),
-      data_pe_us %>% mutate(Scenario = 'Supply Elasticity +20%'),
-      data_pe_cd %>% mutate(Scenario = 'With Cross Demand Elasticities'),
-      data_pe_cs %>% mutate(Scenario = 'With Cross Supply Elasticities'),
+data_pe <- rbind(data_pe_ld %>% mutate(Scenario = 'Own Demand Elasticity -20%'),
+      data_pe_ud %>% mutate(Scenario = 'Own Demand Elasticity +20%'),
+      data_pe_ls %>% mutate(Scenario = 'Own Supply Elasticity -20%'),
+      data_pe_us %>% mutate(Scenario = 'Own Supply Elasticity +20%'),
+      data_pe_cd %>% mutate(Scenario = 'With Cross Demand Effect'),
+      data_pe_cs %>% mutate(Scenario = 'With Cross Supply Effect'),
       data_pe_baseline %>% mutate(Scenario = 'Baseline'))
 data_pe$Type <- 'Partial Equilibrium'
 data_pe <- data_pe %>% mutate(isBaseline = as.numeric('Baseline' == Scenario))
@@ -110,6 +109,8 @@ plot_height <- 5
 scenario_colors <- brewer.pal(length(unique(data$Scenario)), "Set1")
 names(scenario_colors) <- levels(factor(unique(data$Scenario)))
 scenario_colors[1] <- '#000000'
+scenario_colors['With Cross Demand Effect'] <- '#d10000'
+scenario_colors['With Cross Supply Effect'] <- '#00deda'
 
 # Plot theme
 plot_settings <- list(geom_line(),
@@ -122,7 +123,8 @@ plot_settings <- list(geom_line(),
                                              scales::percent_format(accuracy = 1L)),
                       scale_x_continuous(breaks = seq(0,30,by=1)),
                       theme_custom(),
-                      theme(legend.text = element_text(size = 8),
+                      theme(legend.title = element_text(size = 10),
+                            legend.text = element_text(size = 8),
                             legend.box = 'vertical',
                             legend.key.width = unit(1.1,"cm"),
                             legend.spacing.y = unit(0.1, "cm")),
@@ -162,7 +164,7 @@ ggplot(data = filter(data_agg),
          y = '% Difference in Producer Surplus from Baseline')
 
 ggsave(paste0(folder, 'graphs/R/', 'AllCrops_Producer_surplus_change.png'),
-       width = plot_width*1.1, height = plot_height*1.1)
+       width = plot_width*1.1, height = plot_height*1.2)
 
 # Producer Surplus by Crop
 ggplot(data = filter(data),
@@ -175,7 +177,7 @@ ggplot(data = filter(data),
     facet_grid(Country ~ Crop)
 
 ggsave(paste0(folder, 'graphs/R/', 'ByCrop_Producer_surplus_change.png'),
-       width = plot_width*1.1, height = plot_height*1.1)
+       width = plot_width*1.1, height = plot_height*1.2)
 
 # Consumer Surplus All Crops
 ggplot(data = filter(data_agg),
@@ -188,7 +190,7 @@ ggplot(data = filter(data_agg),
          y = '% Difference in Consumer Surplus from Baseline')
 
 ggsave(paste0(folder, 'graphs/R/', 'AllCrops_Consumer_surplus_change.png'),
-       width = plot_width*1.1, height = plot_height*1.1)
+       width = plot_width*1.1, height = plot_height*1.2)
 
 # Consumer Surplus by Crop
 ggplot(data = filter(data),
@@ -201,7 +203,7 @@ ggplot(data = filter(data),
     facet_grid(Country ~ Crop)
 
 ggsave(paste0(folder, 'graphs/R/', 'ByCrop_Consumer_surplus_change.png'),
-       width = plot_width*1.1, height = plot_height*1.1)
+       width = plot_width*1.1, height = plot_height*1.2)
 
 # Price Change by Crop
 ggplot(data = filter(data),
@@ -214,7 +216,7 @@ ggplot(data = filter(data),
     facet_grid(Country ~ Crop)
 
 ggsave(paste0(folder, 'graphs/R/', 'ByCrop_Price_change.png'),
-       width = plot_width*1.1, height = plot_height*1.1)
+       width = plot_width*1.1, height = plot_height*1.2)
 
 
 ## Quantity Graph
@@ -245,7 +247,7 @@ ggplot(data = filter(data_merge),
                                 override.aes = list(size = 1, width = 10)))
 
 ggsave(paste0(folder, 'graphs/R/', 'ByCrop_Quantity_change.png'),
-       width = plot_width*1.1, height = plot_height*1.1)
+       width = plot_width*1.1, height = plot_height*1.2)
 
 
 ## Calorie Change Graph
@@ -303,7 +305,7 @@ ggplot(data = filter(data_merge_cal_agg),
                                    override.aes = list(size = 1, width = 10)))
 
 ggsave(paste0(folder, 'graphs/R/', 'ByCountry_Calorie_change.png'),
-       width = plot_width*1.1, height = plot_height*1.1)
+       width = plot_width*1.1, height = plot_height*1.2)
 
 # Aggregate countries and crops
 data_merge_cal_agg_country <- data_merge_cal %>%

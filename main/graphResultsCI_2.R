@@ -249,7 +249,6 @@ ggplot(data = filter(data_merge),
 ggsave(paste0(folder, 'graphs/R/', 'ByCrop_Quantity_change.png'),
        width = plot_width*1.1, height = plot_height*1.2)
 
-
 ## Calorie Change Graph
 
 # Convert quantities in units of calories (1 MT = 1,000,000,000,000)
@@ -334,3 +333,146 @@ ggplot(data = filter(data_merge_cal_agg_country),
 
 ggsave(paste0(folder, 'graphs/R/', 'All_Calorie_change.png'),
        width = plot_width*1.1, height = plot_height*1)
+
+
+####################################
+### Plots With Bands
+
+
+plot_settings_bands <- list(
+    scale_alpha(range = c(0.6, 0.9)),
+    scale_size(range = c(0.5, 1)),
+    scale_y_continuous(labels =
+                           scales::percent_format(
+                               accuracy = 1L)),
+    scale_x_continuous(breaks = seq(0,30,by=1)),
+    theme_custom(),
+    theme(legend.title = element_text(size = 10),
+          legend.text = element_text(size = 8),
+          legend.box = 'vertical',
+          legend.key.width = unit(1,"cm"),
+          legend.key.height = unit(0.5,"cm"),
+          legend.spacing.y = unit(-0.2, "cm")),
+    facet_grid(Country ~ .),
+    annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf),
+    annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf),
+    geom_line(aes(y = Baseline, color = 'PE'), size = 0.5),
+    geom_line(aes(y = `Crop Model`, color = 'CM')),
+    scale_color_manual("", labels = c('Crop Model', 'Partial Eq'),
+                       values = c('PE' = 'black', 'CM' = 'lightseagreen')),
+    geom_ribbon(aes(ymin = `Own Demand Elasticity -20%`,
+                    ymax = `Own Demand Elasticity +20%` ,
+                    fill = 'demand'),
+                alpha = 0.2),
+    geom_ribbon(aes(ymin = `Own Supply Elasticity -20%`,
+                    ymax = `Own Supply Elasticity +20%`,
+                    fill = 'supply'),
+                alpha = 0.2),
+    scale_fill_manual("", labels = c('\u00B1 20% Demand Elasticity',
+                                     '\u00B1 20% Supply Elasticity'),
+                      values = c('demand' = 'blue', 'supply' = 'red')),
+    geom_line(aes(y = `With Cross Demand Effect`, linetype = 'demand'),
+              size = 0.5),
+    geom_line(aes(y = `With Cross Supply Effect`, linetype = 'supply'),
+              size = 0.5),
+    scale_linetype_manual("", labels = c('Partial Eq with Cross Supply Effect',
+                                         'Partial Eq with Cross Demand Effect'),
+                          values = c('demand' = 'dotted',
+                                     'supply' = 'longdash')),
+    guides(color = guide_legend(order = 1),
+           linetype = guide_legend(order = 2),
+           fill = guide_legend(order = 3))
+)
+
+## Quantity Change with Bands
+
+# Merge pe and cm data
+data_cm$Scenario <- 'Crop Model'
+data_cm$isBaseline <- 1
+data_merge <- rbind(
+    data[,c('Type', 'Country', 'Crop', 'Year', 'isBaseline',
+            'Percent_Quantity_Change', 'Scenario')],
+    data_cm)
+data_merge <- filter(data_merge, Country %in% country_subset,
+                     Crop %in% c('Corn', 'Soybean'))
+
+data_merge_wide <- data_merge %>%
+    select(!Type) %>%
+    group_by(Country, Year, Crop) %>%
+    select(Country, Year, Crop, Scenario, Percent_Quantity_Change) %>%
+    pivot_wider(names_from = 'Scenario',
+                values_from = 'Percent_Quantity_Change' )
+
+ggplot(data = filter(data_merge_wide) %>% ungroup(),
+       aes(x = Year)) +
+    labs(title = paste('All Crops', 'Partial Equilibrium', sep = ' - '),
+         subtitle = '% Change in Quantity over Time',
+         y = '% Change in Quantity from Baseline') +
+    plot_settings_bands +
+    facet_grid(Country ~ Crop)
+
+ggsave(paste0(folder, 'graphs/R/bands/', 'ByCrop_Quantity_change.png'),
+       width = plot_width*1.1, height = plot_height*1.7)
+
+
+## Calorie Change with Bands
+
+# Merge pe and cm data
+data_cm$Scenario <- 'Baseline'
+data_cm$isBaseline <- 0
+data_merge <- rbind(
+    data[,c('Type', 'Country', 'Crop', 'Year', 'isBaseline',
+            'Percent_Quantity_Change', 'Scenario')],
+    data_cm)
+data_merge <- filter(data_merge, Country %in% country_subset,
+                     Crop %in% c('Corn', 'Soybean'))
+
+# Convert quantities in units of calories (1 MT = 1,000,000,000,000)
+data$Calories_Original = 0
+
+data[data$Crop == 'Corn', 'Calories_Original'] <-
+    data[data$Crop == 'Corn', 'Quantity_Original']*(98/100)*(10e12)
+data[data$Crop == 'Soybean', 'Calories_Original'] <-
+    data[data$Crop == 'Soybean', 'Quantity_Original']*(147/100)*(10e12)
+
+# Add "Calories Original" to data_cm
+data_cm_cal <- left_join(data_cm,
+                         data[c('Country', 'Crop', 'Calories_Original')],
+                         by = c('Country', 'Crop'))
+
+# Merge pe and cm data
+data_cm$Scenario <- 'Baseline'
+data_cm$isBaseline <- 0
+data_merge_cal_bands <- rbind(
+    data[,c('Type', 'Country', 'Crop', 'Year', 'isBaseline',
+            'Calories_Original', 'Percent_Quantity_Change', 'Scenario')],
+    data_cm_cal) %>%
+    filter(Country %in% country_subset,
+           Crop %in% c('Corn', 'Soybean')) %>%
+    mutate(Calories_Produced =
+               Calories_Original*(1+Percent_Quantity_Change)) %>%
+    group_by(Country, Year, Type, Scenario) %>%
+    summarize_at(vars(-Crop), sum) %>%
+    mutate(Percent_Calorie_Change =
+               ((Calories_Produced/Calories_Original) - 1)) %>%
+    mutate(Scenario =
+               (if (!str_detect(Type, 'Crop Model')) Scenario
+                else 'Crop Model')) %>%
+    ungroup() %>%
+    select(Country, Year, Scenario, Percent_Calorie_Change) %>%
+    group_by(Country, Year) %>%
+    pivot_wider(names_from = 'Scenario',
+                values_from = 'Percent_Calorie_Change' )
+
+
+# Calorie Change by Country
+ggplot(data = filter(data_merge_cal_bands) %>% ungroup(),
+       aes(x = Year)) +
+    labs(title = paste('All Crops', 'Partial Equilibrium', sep = ' - '),
+         subtitle = '% Change in Calories over Time',
+         y = '% Change in Calories from Baseline') +
+    plot_settings_bands +
+    facet_grid(Country ~ .)
+
+ggsave(paste0(folder, 'graphs/R/bands/', 'ByCrop_Calorie_change.png'),
+       width = plot_width*1.1, height = plot_height*1.7)
